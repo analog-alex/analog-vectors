@@ -100,10 +100,10 @@ pub fn multiply(lhs: Mat4, rhs: Mat4) Mat4 {
 
 pub fn transpose(m: Mat4) Mat4 {
     return [16]f32{
-        m[0],  m[4],  m[8],  m[12],
-        m[1],  m[5],  m[9],  m[13],
-        m[2],  m[6],  m[10], m[14],
-        m[3],  m[7],  m[11], m[15],
+        m[0], m[4], m[8],  m[12],
+        m[1], m[5], m[9],  m[13],
+        m[2], m[6], m[10], m[14],
+        m[3], m[7], m[11], m[15],
     };
 }
 
@@ -332,9 +332,9 @@ pub fn perspective(fov_radians: f32, aspect: f32, near: f32, far: f32) Mat4 {
     const nf = 1.0 / (near - far);
 
     return [16]f32{
-        f / aspect, 0, 0,                   0,
-        0,          f, 0,                   0,
-        0,          0, (far + near) * nf,   -1,
+        f / aspect, 0, 0,                     0,
+        0,          f, 0,                     0,
+        0,          0, (far + near) * nf,     -1,
         0,          0, 2.0 * far * near * nf, 0,
     };
 }
@@ -358,9 +358,9 @@ pub fn lookAt(eye: vec3.Vec3, target: vec3.Vec3, up: vec3.Vec3) Mat4 {
     const u = vec3.cross(s, f);
 
     return [16]f32{
-        s[0],                u[0],                -f[0],               0,
-        s[1],                u[1],                -f[1],               0,
-        s[2],                u[2],                -f[2],               0,
+        s[0],              u[0],              -f[0],            0,
+        s[1],              u[1],              -f[1],            0,
+        s[2],              u[2],              -f[2],            0,
         -vec3.dot(s, eye), -vec3.dot(u, eye), vec3.dot(f, eye), 1,
     };
 }
@@ -405,10 +405,22 @@ test "multiply - identity matrix" {
 
 test "transpose swaps rows and columns" {
     const m = from(
-        1,  2,  3,  4,
-        5,  6,  7,  8,
-        9,  10, 11, 12,
-        13, 14, 15, 16,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
     );
     const t = transpose(m);
     try std.testing.expect(get(t, 0, 1) == get(m, 1, 0));
