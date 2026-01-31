@@ -1,0 +1,60 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: ['*']
+
+jobs:
+  lint-test-build:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        zig-version: ['0.15.1']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: ${{ matrix.zig-version }}
+
+      - name: Cache Zig dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zig
+            zig-cache
+          key: ${{ runner.os }}-zig-${{ matrix.zig-version }}-${{ hashFiles('build.zig.zon') }}
+          restore-keys: |
+            ${{ runner.os }}-zig-${{ matrix.zig-version }}-
+            ${{ runner.os }}-zig-
+
+      - name: Check code formatting
+        run: |
+          echo "Running Zig formatter check..."
+          zig fmt --check .
+          echo "✓ Code formatting check passed"
+
+      - name: Run tests
+        run: |
+          echo "Running all tests..."
+          zig build test
+          echo "✓ All tests passed"
+
+      - name: Build project
+        run: |
+          echo "Building project..."
+          zig build
+          echo "✓ Build successful"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ All checks passed!"
+          echo "- Formatting: OK"
+          echo "- Tests: OK"
+          echo "- Build: OK"
