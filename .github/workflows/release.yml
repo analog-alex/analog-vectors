@@ -1,0 +1,153 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  validate-and-publish:
+    name: Validate Release & Publish
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        zig-version: ['0.15.2']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: ${{ matrix.zig-version }}
+
+      - name: Cache Zig dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zig
+            zig-cache
+          key: ${{ runner.os }}-zig-${{ matrix.zig-version }}-${{ hashFiles('build.zig.zon') }}
+          restore-keys: |
+            ${{ runner.os }}-zig-${{ matrix.zig-version }}-
+            ${{ runner.os }}-zig-
+
+      - name: Extract version from release tag
+        id: version
+        run: |
+          # Extract version from tag (e.g., v0.1.0 -> 0.1.0)
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Releasing version: $VERSION"
+
+      - name: Verify version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          # Check if version follows semantic versioning (X.Y.Z)
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Error: Version '$VERSION' does not follow semantic versioning (X.Y.Z)"
+            exit 1
+          fi
+          echo "✓ Version format is valid: $VERSION"
+
+      - name: Check code formatting
+        run: |
+          echo "Running Zig formatter check..."
+          zig fmt --check .
+          echo "✓ Code formatting check passed"
+
+      - name: Run tests
+        run: |
+          echo "Running all tests for release validation..."
+          zig build test
+          echo "✓ All tests passed"
+
+      - name: Build library
+        run: |
+          echo "Building library for release..."
+          zig build
+          echo "✓ Build successful"
+
+      - name: Verify build.zig.zon version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ZON_VERSION=$(grep -oP '\.version = "\K[^"]+' build.zig.zon)
+
+          echo "Release tag version: $VERSION"
+          echo "build.zig.zon version: $ZON_VERSION"
+
+          if [ "$VERSION" != "$ZON_VERSION" ]; then
+            echo "⚠️  Warning: Version mismatch detected"
+            echo "Release tag: v$VERSION"
+            echo "build.zig.zon: $ZON_VERSION"
+            echo ""
+            echo "Consider updating build.zig.zon to match the release version."
+          else
+            echo "✓ Version consistency verified"
+          fi
+
+      - name: Generate release artifacts
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ARTIFACT_DIR="release-artifacts"
+          mkdir -p "$ARTIFACT_DIR"
+
+          # Create a tarball of the source for distribution
+          tar -czf "$ARTIFACT_DIR/vectors-$VERSION.tar.gz" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='zig-cache' \
+            --exclude='zig-out' \
+            src/ build.zig build.zig.zon README.md
+
+          echo "✓ Release artifacts generated"
+          ls -lh "$ARTIFACT_DIR"
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ steps.version.outputs.version }}
+          path: release-artifacts/
+          retention-days: 90
+
+      - name: Attach artifacts to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="v$VERSION"
+
+          # Upload tarball to the release
+          gh release upload "$TAG" release-artifacts/vectors-$VERSION.tar.gz \
+            --clobber
+
+          echo "✓ Artifacts attached to release $TAG"
+
+      - name: Release summary
+        if: success()
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "✅ Release v$VERSION published successfully!"
+          echo ""
+          echo "Release validation:"
+          echo "- Formatting: OK"
+          echo "- Tests: OK"
+          echo "- Build: OK"
+          echo "- Artifacts: Generated and attached"
+          echo ""
+          echo "📦 Release artifacts:"
+          echo "- vectors-$VERSION.tar.gz"
+          echo ""
+          echo "🎉 Library is ready for distribution!"
+
+      - name: Zig package registry info
+        if: success()
+        run: |
+          echo "ℹ️  Zig Package Manager Publishing"
+          echo ""
+          echo "As of Zig 0.15.x, the official package registry is still in development."
+          echo "Once Zig 1.0 is released, consider publishing to the official registry."
+          echo ""
+          echo "For now, users can consume this package via Git URL:"
+          echo "  zig fetch --save https://github.com/${{ github.repository }}/archive/refs/tags/v${{ steps.version.outputs.version }}.tar.gz"
