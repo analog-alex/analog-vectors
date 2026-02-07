@@ -49,7 +49,7 @@ pub fn fromAxisAngle(axis: vec3.Vec3, radians: f32) Quat {
 /// Returns the axis as a Vec3 and the angle in radians
 /// For identity quaternion, returns (unitX, 0)
 pub fn toAxisAngle(q: Quat) struct { axis: vec3.Vec3, angle: f32 } {
-    const n = normalize(q);
+    const n = normalizeOrIdentity(q);
     const half_angle = std.math.acos(@max(-1.0, @min(1.0, n[3])));
     const s = @sin(half_angle);
 
@@ -106,10 +106,16 @@ pub fn length(q: Quat) f32 {
     return @sqrt(lengthSquared(q));
 }
 
-pub fn normalize(q: Quat) Quat {
+pub fn normalize(q: Quat) ?Quat {
     const len = length(q);
-    if (len == 0) return identity();
+    if (len == 0) return null;
     return [4]f32{ q[0] / len, q[1] / len, q[2] / len, q[3] / len };
+}
+
+/// Normalizes a quaternion, returning the identity quaternion if the input has zero length.
+/// Use this when you want the legacy behavior of silently handling zero-length quaternions.
+pub fn normalizeOrIdentity(q: Quat) Quat {
+    return normalize(q) orelse identity();
 }
 
 // ===============
@@ -142,7 +148,7 @@ pub fn slerp(a: Quat, b: Quat, t: f32) Quat {
     // If quaternions are very close, fall back to normalized lerp
     if (cos_theta > 0.9995) {
         const result = lerp(a, b_adj, t);
-        return normalize(result);
+        return normalizeOrIdentity(result);
     }
 
     const theta = std.math.acos(@max(-1.0, @min(1.0, cos_theta)));
@@ -265,7 +271,7 @@ test "toAxisAngle - identity quaternion returns zero angle" {
 
 test "fromAxisAngle - round trip preserves rotation" {
     // given
-    const axis = vec3.normalize(vec3.from(1, 1, 1));
+    const axis = vec3.normalize(vec3.from(1, 1, 1)).?;
     const angle: f32 = std.math.pi / 4.0;
 
     // when
@@ -335,7 +341,7 @@ test "conjugate - identity conjugate is identity" {
 
 test "inverse - q * q_inv = identity" {
     // given
-    const q = normalize(from(1, 2, 3, 4));
+    const q = normalize(from(1, 2, 3, 4)).?;
 
     // when
     const q_inv = inverse(q);
@@ -347,7 +353,7 @@ test "inverse - q * q_inv = identity" {
 
 test "inverse - unit quaternion inverse equals conjugate" {
     // given
-    const q = normalize(from(1, 2, 3, 4));
+    const q = normalize(from(1, 2, 3, 4)).?;
 
     // when
     const q_inv = inverse(q);
@@ -396,7 +402,7 @@ test "normalize - produces unit quaternion" {
     const q = from(1, 2, 3, 4);
 
     // when
-    const result = normalize(q);
+    const result = normalize(q).?;
 
     // then
     try std.testing.expect(@abs(length(result) - 1.0) < 0.0001);
@@ -407,10 +413,32 @@ test "normalize - preserves direction" {
     const q = from(0, 0, 0, 2);
 
     // when
-    const result = normalize(q);
+    const result = normalize(q).?;
 
     // then
     try std.testing.expect(approxEqual(result, from(0, 0, 0, 1), 0.0001));
+}
+
+test "normalize - returns null for zero quaternion" {
+    // given
+    const q = from(0, 0, 0, 0);
+
+    // when
+    const result = normalize(q);
+
+    // then
+    try std.testing.expect(result == null);
+}
+
+test "normalizeOrIdentity - returns identity for zero quaternion" {
+    // given
+    const q = from(0, 0, 0, 0);
+
+    // when
+    const result = normalizeOrIdentity(q);
+
+    // then
+    try std.testing.expect(equal(result, identity()));
 }
 
 // ===============
@@ -567,7 +595,7 @@ test "rotateVec - 180 degree rotation" {
 
 test "rotateVec - preserves vector length" {
     // given
-    const q = fromAxisAngle(vec3.normalize(vec3.from(1, 1, 1)), std.math.pi / 3.0);
+    const q = fromAxisAngle(vec3.normalize(vec3.from(1, 1, 1)).?, std.math.pi / 3.0);
     const v = vec3.from(2, 3, 6);
 
     // when

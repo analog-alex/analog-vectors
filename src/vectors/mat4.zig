@@ -314,7 +314,7 @@ pub fn rotationAxis(axis: vec3.Vec3, radians: f32) Mat4 {
     const s = @sin(radians);
     const t = 1.0 - c;
 
-    const n = vec3.normalize(axis);
+    const n = vec3.normalizeOrZero(axis);
     const x = n[0];
     const y = n[1];
     const z = n[2];
@@ -353,8 +353,8 @@ pub fn orthographic(left: f32, right: f32, bottom: f32, top: f32, near: f32, far
 }
 
 pub fn lookAt(eye: vec3.Vec3, target: vec3.Vec3, up: vec3.Vec3) Mat4 {
-    const f = vec3.normalize(vec3.sub(target, eye));
-    const s = vec3.normalize(vec3.cross(f, up));
+    const f = vec3.normalizeOrZero(vec3.sub(target, eye));
+    const s = vec3.normalizeOrZero(vec3.cross(f, up));
     const u = vec3.cross(s, f);
 
     return [16]f32{
@@ -470,7 +470,7 @@ test "rotationZ rotates around z-axis" {
 }
 
 test "rotationAxis rotates around arbitrary axis" {
-    const axis = vec3.normalize(vec3.from(1, 1, 1));
+    const axis = vec3.normalize(vec3.from(1, 1, 1)).?;
     const m = rotationAxis(axis, std.math.pi * 2.0 / 3.0);
     const v = vec3.from(1, 0, 0);
     const result = transformVec3(m, v);

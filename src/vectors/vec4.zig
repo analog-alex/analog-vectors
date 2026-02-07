@@ -68,10 +68,16 @@ pub fn length(v: Vec4) f32 {
     return @sqrt(lengthSquared(v));
 }
 
-pub fn normalize(v: Vec4) Vec4 {
+pub fn normalize(v: Vec4) ?Vec4 {
     const len = length(v);
-    if (len == 0) return zero();
+    if (len == 0) return null;
     return div(v, len);
+}
+
+/// Normalizes a vector, returning the zero vector if the input has zero length.
+/// Use this when you want the legacy behavior of silently handling zero vectors.
+pub fn normalizeOrZero(v: Vec4) Vec4 {
+    return normalize(v) orelse zero();
 }
 
 pub fn distance(a: Vec4, b: Vec4) f32 {
@@ -332,8 +338,20 @@ test "length - calculates magnitude" {
 
 test "normalize - creates unit vector" {
     const v = from(2, 2, 1, 0);
-    const result = normalize(v);
+    const result = normalize(v).?;
     try std.testing.expect(@abs(length(result) - 1.0) < 0.0001);
+}
+
+test "normalize - returns null for zero vector" {
+    const v = zero();
+    const result = normalize(v);
+    try std.testing.expect(result == null);
+}
+
+test "normalizeOrZero - returns zero for zero vector" {
+    const v = zero();
+    const result = normalizeOrZero(v);
+    try std.testing.expect(equal(result, zero()));
 }
 
 test "dot - calculates dot product" {
@@ -592,7 +610,7 @@ test "reflect - perpendicular vector reflects back" {
 test "reflect - preserves magnitude" {
     // given
     const v = from(3, 4, 5, 6);
-    const normal = normalize(from(1, 1, 1, 1));
+    const normal = normalize(from(1, 1, 1, 1)).?;
 
     // when
     const result = reflect(v, normal);
