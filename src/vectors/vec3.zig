@@ -45,6 +45,14 @@ pub fn neg(v: Vec3) Vec3 {
     return [3]f32{ -v[0], -v[1], -v[2] };
 }
 
+pub fn componentMul(lhs: Vec3, rhs: Vec3) Vec3 {
+    return [3]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1], lhs[2] * rhs[2] };
+}
+
+pub fn componentDiv(lhs: Vec3, rhs: Vec3) Vec3 {
+    return [3]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1], lhs[2] / rhs[2] };
+}
+
 // ===============
 // Length/Distance Operations
 
@@ -305,6 +313,78 @@ test "neg - can negate vector" {
 
     // then
     try std.testing.expect(equal(result, from(-2, 3, -4)));
+}
+
+test "componentMul - multiplies components element-wise" {
+    // given
+    const a = from(2, 3, 4);
+    const b = from(5, 6, 7);
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(10, 18, 28)));
+}
+
+test "componentMul - handles zero vector" {
+    // given
+    const a = from(5, 7, 9);
+    const b = zero();
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, zero()));
+}
+
+test "componentMul - handles one vector as identity" {
+    // given
+    const v = from(3, 4, 5);
+    const identity = one();
+
+    // when
+    const result = componentMul(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - divides components element-wise" {
+    // given
+    const a = from(10, 18, 28);
+    const b = from(2, 3, 4);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(5, 6, 7)));
+}
+
+test "componentDiv - handles one vector as identity" {
+    // given
+    const v = from(6, 9, 12);
+    const identity = one();
+
+    // when
+    const result = componentDiv(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - handles different divisors per component" {
+    // given
+    const a = from(10, 20, 30);
+    const b = from(2, 4, 5);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(5, 5, 6)));
 }
 
 // ===============

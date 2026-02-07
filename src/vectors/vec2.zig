@@ -41,6 +41,14 @@ pub fn neg(v: Vec2) Vec2 {
     return [2]f32{ -v[0], -v[1] };
 }
 
+pub fn componentMul(lhs: Vec2, rhs: Vec2) Vec2 {
+    return [2]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1] };
+}
+
+pub fn componentDiv(lhs: Vec2, rhs: Vec2) Vec2 {
+    return [2]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1] };
+}
+
 // ===============
 // Length/Distance Operations
 
@@ -269,6 +277,78 @@ test "neg - can negate vector" {
 
     // then
     try std.testing.expect(equal(result, from(-2, 3)));
+}
+
+test "componentMul - multiplies components element-wise" {
+    // given
+    const a = from(2, 3);
+    const b = from(4, 5);
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(8, 15)));
+}
+
+test "componentMul - handles zero vector" {
+    // given
+    const a = from(5, 7);
+    const b = zero();
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, zero()));
+}
+
+test "componentMul - handles one vector as identity" {
+    // given
+    const v = from(3, 4);
+    const identity = one();
+
+    // when
+    const result = componentMul(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - divides components element-wise" {
+    // given
+    const a = from(8, 15);
+    const b = from(2, 3);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(4, 5)));
+}
+
+test "componentDiv - handles one vector as identity" {
+    // given
+    const v = from(6, 9);
+    const identity = one();
+
+    // when
+    const result = componentDiv(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - handles different divisors per component" {
+    // given
+    const a = from(10, 20);
+    const b = from(2, 4);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(5, 5)));
 }
 
 // ===============
