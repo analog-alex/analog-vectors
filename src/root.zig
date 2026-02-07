@@ -19,6 +19,9 @@ pub const mat3 = @import("vectors/mat3.zig");
 // Export mat4 module for library consumers
 pub const mat4 = @import("vectors/mat4.zig");
 
+// Export quat module for library consumers
+pub const quat = @import("vectors/quat.zig");
+
 test {
     std.testing.refAllDecls(@This());
 }
@@ -53,4 +56,11 @@ test "mat4 module is accessible" {
     const v = vec3.from(1, 2, 3);
     const result = mat4.transformVec3(m, v);
     try std.testing.expect(vec3.equal(result, v));
+}
+
+test "quat module is accessible" {
+    const q: quat.Quat = quat.identity();
+    const v = vec3.from(1, 2, 3);
+    const result = quat.rotateVec(q, v);
+    try std.testing.expect(vec3.approxEqual(result, v, 0.0001));
 }
