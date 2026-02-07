@@ -78,6 +78,31 @@ pub inline fn cross(lhs: Vec2, rhs: Vec2) f32 {
 }
 
 // ===============
+// Geometric Projections
+
+/// Projects vector v onto another vector
+/// Returns the component of v that lies in the direction of onto
+pub fn project(v: Vec2, onto: Vec2) Vec2 {
+    const onto_len_sq = lengthSquared(onto);
+    if (onto_len_sq == 0) return zero();
+    const scalar = dot(v, onto) / onto_len_sq;
+    return mul(onto, scalar);
+}
+
+/// Returns the rejection of v from another vector
+/// This is the perpendicular component of v relative to ref
+pub fn reject(v: Vec2, ref: Vec2) Vec2 {
+    return sub(v, project(v, ref));
+}
+
+/// Reflects vector v across a normal vector
+/// The normal should be normalized for correct results
+pub fn reflect(v: Vec2, normal: Vec2) Vec2 {
+    const d = dot(v, normal);
+    return sub(v, mul(normal, 2 * d));
+}
+
+// ===============
 // Interpolation & Clamping
 
 pub fn lerp(a: Vec2, b: Vec2, t: f32) Vec2 {
@@ -367,6 +392,192 @@ test "cross - parallel vectors have zero cross product" {
 
     // then
     try std.testing.expect(result == 0);
+}
+
+// ===============
+// Geometric Projection Tests
+
+test "project - projects onto horizontal vector" {
+    // given
+    const v = from(3, 4);
+    const onto = from(1, 0);
+
+    // when
+    const result = project(v, onto);
+
+    // then
+    try std.testing.expect(equal(result, from(3, 0)));
+}
+
+test "project - projects onto vertical vector" {
+    // given
+    const v = from(3, 4);
+    const onto = from(0, 1);
+
+    // when
+    const result = project(v, onto);
+
+    // then
+    try std.testing.expect(equal(result, from(0, 4)));
+}
+
+test "project - projects onto diagonal vector" {
+    // given
+    const v = from(4, 2);
+    const onto = from(1, 1);
+
+    // when
+    const result = project(v, onto);
+
+    // then
+    try std.testing.expect(equal(result, from(3, 3)));
+}
+
+test "project - handles zero onto vector" {
+    // given
+    const v = from(3, 4);
+    const onto = zero();
+
+    // when
+    const result = project(v, onto);
+
+    // then
+    try std.testing.expect(equal(result, zero()));
+}
+
+test "project - parallel vectors project fully" {
+    // given
+    const v = from(6, 8);
+    const onto = from(3, 4);
+
+    // when
+    const result = project(v, onto);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "reject - returns perpendicular component to horizontal" {
+    // given
+    const v = from(3, 4);
+    const ref = from(1, 0);
+
+    // when
+    const result = reject(v, ref);
+
+    // then
+    try std.testing.expect(equal(result, from(0, 4)));
+}
+
+test "reject - returns perpendicular component to vertical" {
+    // given
+    const v = from(3, 4);
+    const ref = from(0, 1);
+
+    // when
+    const result = reject(v, ref);
+
+    // then
+    try std.testing.expect(equal(result, from(3, 0)));
+}
+
+test "reject - returns perpendicular component to diagonal" {
+    // given
+    const v = from(4, 2);
+    const ref = from(1, 1);
+
+    // when
+    const result = reject(v, ref);
+
+    // then
+    try std.testing.expect(equal(result, from(1, -1)));
+}
+
+test "reject - returns original vector when ref is perpendicular" {
+    // given
+    const v = from(0, 5);
+    const ref = from(1, 0);
+
+    // when
+    const result = reject(v, ref);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "reject - parallel vectors reject to zero" {
+    // given
+    const v = from(6, 8);
+    const ref = from(3, 4);
+
+    // when
+    const result = reject(v, ref);
+
+    // then
+    try std.testing.expect(approxEqual(result, zero(), 0.0001));
+}
+
+test "reflect - reflects across horizontal normal" {
+    // given
+    const v = from(3, 4);
+    const normal = from(0, 1);
+
+    // when
+    const result = reflect(v, normal);
+
+    // then
+    try std.testing.expect(equal(result, from(3, -4)));
+}
+
+test "reflect - reflects across vertical normal" {
+    // given
+    const v = from(3, 4);
+    const normal = from(1, 0);
+
+    // when
+    const result = reflect(v, normal);
+
+    // then
+    try std.testing.expect(equal(result, from(-3, 4)));
+}
+
+test "reflect - reflects across diagonal normal" {
+    // given
+    const v = from(1, 0);
+    const sqrt2_inv: f32 = 1.0 / @sqrt(2.0);
+    const normal = from(sqrt2_inv, sqrt2_inv);
+
+    // when
+    const result = reflect(v, normal);
+
+    // then
+    try std.testing.expect(approxEqual(result, from(0, -1), 0.0001));
+}
+
+test "reflect - perpendicular vector reflects back" {
+    // given
+    const v = from(0, 5);
+    const normal = from(0, 1);
+
+    // when
+    const result = reflect(v, normal);
+
+    // then
+    try std.testing.expect(equal(result, from(0, -5)));
+}
+
+test "reflect - preserves magnitude" {
+    // given
+    const v = from(3, 4);
+    const normal = normalize(from(1, 1));
+
+    // when
+    const result = reflect(v, normal);
+
+    // then
+    const original_len = length(v);
+    const reflected_len = length(result);
+    try std.testing.expect(@abs(original_len - reflected_len) < 0.0001);
 }
 
 // ===============
