@@ -131,6 +131,55 @@ pub fn lerp(a: Vec3, b: Vec3, t: f32) Vec3 {
     };
 }
 
+/// Spherical linear interpolation between two vectors.
+/// Better than lerp for rotating vectors as it maintains constant angular velocity.
+/// Both input vectors should ideally be normalized for best results.
+/// When t=0, returns a. When t=1, returns b. For t in (0,1), returns a smooth interpolation.
+pub fn slerp(a: Vec3, b: Vec3, t: f32) Vec3 {
+    const epsilon = 0.0001;
+
+    // Compute the cosine of the angle between the two vectors
+    const dot_product = dot(a, b);
+
+    // If the vectors are very close, use lerp to avoid division by zero
+    if (dot_product > 1.0 - epsilon) {
+        return normalize(lerp(a, b, t));
+    }
+
+    // If the vectors are opposite, find a perpendicular vector and interpolate through it
+    if (dot_product < -1.0 + epsilon) {
+        // Find a perpendicular vector to a
+        const perp = if (@abs(a[0]) < 0.9)
+            normalize(cross(a, from(1, 0, 0)))
+        else
+            normalize(cross(a, from(0, 1, 0)));
+
+        // Rotate around the perpendicular axis
+        const angle = std.math.pi * t;
+        return rotate(a, perp, angle);
+    }
+
+    // Clamp dot product to valid range for acos
+    const clamped_dot = @max(-1.0, @min(1.0, dot_product));
+    const theta = std.math.acos(clamped_dot);
+    const sin_theta = @sin(theta);
+
+    // Additional safety check for sin_theta
+    if (@abs(sin_theta) < epsilon) {
+        return normalize(lerp(a, b, t));
+    }
+
+    // Calculate interpolation coefficients
+    const a_coeff = @sin((1.0 - t) * theta) / sin_theta;
+    const b_coeff = @sin(t * theta) / sin_theta;
+
+    return [3]f32{
+        a[0] * a_coeff + b[0] * b_coeff,
+        a[1] * a_coeff + b[1] * b_coeff,
+        a[2] * a_coeff + b[2] * b_coeff,
+    };
+}
+
 pub fn clamp(v: Vec3, min_v: Vec3, max_v: Vec3) Vec3 {
     return [3]f32{
         @max(min_v[0], @min(max_v[0], v[0])),
@@ -821,6 +870,135 @@ test "lerp - interpolates at t=0.5" {
 
     // then
     try std.testing.expect(equal(result, from(5, 10, 15)));
+}
+
+test "slerp - interpolates at t=0" {
+    // given
+    const a = normalize(from(1, 0, 0));
+    const b = normalize(from(0, 1, 0));
+
+    // when
+    const result = slerp(a, b, 0);
+
+    // then
+    try std.testing.expect(approxEqual(result, a, 0.0001));
+}
+
+test "slerp - interpolates at t=1" {
+    // given
+    const a = normalize(from(1, 0, 0));
+    const b = normalize(from(0, 1, 0));
+
+    // when
+    const result = slerp(a, b, 1);
+
+    // then
+    try std.testing.expect(approxEqual(result, b, 0.0001));
+}
+
+test "slerp - interpolates at t=0.5 maintains unit length" {
+    // given
+    const a = normalize(from(1, 0, 0));
+    const b = normalize(from(0, 1, 0));
+
+    // when
+    const result = slerp(a, b, 0.5);
+
+    // then
+    try std.testing.expect(@abs(length(result) - 1.0) < 0.0001);
+}
+
+test "slerp - interpolates smoothly between perpendicular vectors" {
+    // given
+    const a = from(1, 0, 0);
+    const b = from(0, 1, 0);
+
+    // when
+    const result = slerp(a, b, 0.5);
+
+    // then
+    // At t=0.5 between perpendicular unit vectors, we expect a 45-degree angle
+    const sqrt2_inv: f32 = 1.0 / @sqrt(2.0);
+    try std.testing.expect(approxEqual(result, from(sqrt2_inv, sqrt2_inv, 0), 0.0001));
+}
+
+test "slerp - handles parallel vectors" {
+    // given
+    const a = from(1, 0, 0);
+    const b = from(2, 0, 0);
+
+    // when
+    const result = slerp(a, b, 0.5);
+
+    // then
+    // For parallel vectors, slerp falls back to normalized lerp
+    try std.testing.expect(approxEqual(result, from(1, 0, 0), 0.0001));
+}
+
+test "slerp - handles opposite vectors" {
+    // given
+    const a = from(1, 0, 0);
+    const b = from(-1, 0, 0);
+
+    // when
+    const result = slerp(a, b, 0.5);
+
+    // then
+    // For opposite vectors at t=0.5, we rotate 180 degrees / 2 = 90 degrees
+    // around a perpendicular axis. The result should be perpendicular to both a and b.
+    try std.testing.expect(@abs(length(result) - 1.0) < 0.0001);
+    try std.testing.expect(@abs(dot(result, a)) < 0.0001);
+    try std.testing.expect(@abs(dot(result, b)) < 0.0001);
+}
+
+test "slerp - interpolates 3D rotation smoothly" {
+    // given
+    const a = normalize(from(1, 0, 0));
+    const b = normalize(from(1, 1, 1));
+
+    // when
+    const result_quarter = slerp(a, b, 0.25);
+    const result_half = slerp(a, b, 0.5);
+    const result_three_quarter = slerp(a, b, 0.75);
+
+    // then
+    // Verify all results maintain unit length
+    try std.testing.expect(@abs(length(result_quarter) - 1.0) < 0.0001);
+    try std.testing.expect(@abs(length(result_half) - 1.0) < 0.0001);
+    try std.testing.expect(@abs(length(result_three_quarter) - 1.0) < 0.0001);
+
+    // Verify monotonic progression toward target
+    const angle_start = angleBetween(a, b);
+    const angle_quarter = angleBetween(a, result_quarter);
+    const angle_half = angleBetween(a, result_half);
+    const angle_three_quarter = angleBetween(a, result_three_quarter);
+
+    try std.testing.expect(angle_quarter < angle_half);
+    try std.testing.expect(angle_half < angle_three_quarter);
+    try std.testing.expect(angle_three_quarter < angle_start);
+}
+
+test "slerp - maintains constant angular velocity" {
+    // given
+    const a = normalize(from(1, 0, 0));
+    const b = normalize(from(0, 1, 0));
+
+    // when
+    const result_quarter = slerp(a, b, 0.25);
+    const result_half = slerp(a, b, 0.5);
+    const result_three_quarter = slerp(a, b, 0.75);
+
+    // then
+    // Angular distances should be approximately equal
+    const angle1 = angleBetween(a, result_quarter);
+    const angle2 = angleBetween(result_quarter, result_half);
+    const angle3 = angleBetween(result_half, result_three_quarter);
+    const angle4 = angleBetween(result_three_quarter, b);
+
+    // All angular segments should be approximately equal (within tolerance)
+    try std.testing.expect(@abs(angle1 - angle2) < 0.001);
+    try std.testing.expect(@abs(angle2 - angle3) < 0.001);
+    try std.testing.expect(@abs(angle3 - angle4) < 0.001);
 }
 
 test "clamp - clamps vector to bounds" {
