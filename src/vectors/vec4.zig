@@ -49,6 +49,14 @@ pub fn neg(v: Vec4) Vec4 {
     return [4]f32{ -v[0], -v[1], -v[2], -v[3] };
 }
 
+pub fn componentMul(lhs: Vec4, rhs: Vec4) Vec4 {
+    return [4]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1], lhs[2] * rhs[2], lhs[3] * rhs[3] };
+}
+
+pub fn componentDiv(lhs: Vec4, rhs: Vec4) Vec4 {
+    return [4]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1], lhs[2] / rhs[2], lhs[3] / rhs[3] };
+}
+
 // ===============
 // Length/Distance Operations
 
@@ -242,6 +250,78 @@ test "neg - can negate vector" {
     const v = from(2, -3, 4, -5);
     const result = neg(v);
     try std.testing.expect(equal(result, from(-2, 3, -4, 5)));
+}
+
+test "componentMul - multiplies components element-wise" {
+    // given
+    const a = from(2, 3, 4, 5);
+    const b = from(6, 7, 8, 9);
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(12, 21, 32, 45)));
+}
+
+test "componentMul - handles zero vector" {
+    // given
+    const a = from(5, 7, 9, 11);
+    const b = zero();
+
+    // when
+    const result = componentMul(a, b);
+
+    // then
+    try std.testing.expect(equal(result, zero()));
+}
+
+test "componentMul - handles one vector as identity" {
+    // given
+    const v = from(3, 4, 5, 6);
+    const identity = one();
+
+    // when
+    const result = componentMul(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - divides components element-wise" {
+    // given
+    const a = from(12, 21, 32, 45);
+    const b = from(2, 3, 4, 5);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(6, 7, 8, 9)));
+}
+
+test "componentDiv - handles one vector as identity" {
+    // given
+    const v = from(6, 9, 12, 15);
+    const identity = one();
+
+    // when
+    const result = componentDiv(v, identity);
+
+    // then
+    try std.testing.expect(equal(result, v));
+}
+
+test "componentDiv - handles different divisors per component" {
+    // given
+    const a = from(10, 20, 30, 40);
+    const b = from(2, 4, 5, 8);
+
+    // when
+    const result = componentDiv(a, b);
+
+    // then
+    try std.testing.expect(equal(result, from(5, 5, 6, 5)));
 }
 
 test "length - calculates magnitude" {
