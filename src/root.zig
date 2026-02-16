@@ -28,6 +28,8 @@ pub const color = @import("utils/color.zig");
 pub const random = @import("utils/random.zig");
 pub const constants = @import("utils/constants.zig");
 pub const math_utils = @import("utils/math.zig");
+pub const easing = @import("utils/easing.zig");
+pub const interpolation = @import("utils/interpolation.zig");
 
 test {
     std.testing.refAllDecls(@This());
@@ -99,4 +101,14 @@ test "constants module is accessible" {
 test "math_utils module is accessible" {
     const result = math_utils.remap(5, 0, 10, 0, 100);
     try std.testing.expectApproxEqAbs(50.0, result, 0.01);
+}
+
+test "easing module is accessible" {
+    const val = easing.easeInQuad(0.5);
+    try std.testing.expectApproxEqAbs(0.25, val, 0.01);
+}
+
+test "interpolation module is accessible" {
+    const val = interpolation.smootherstep(0.0, 1.0, 0.5);
+    try std.testing.expectApproxEqAbs(0.5, val, 0.01);
 }
