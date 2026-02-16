@@ -1,7 +1,7 @@
 // @analogAlex
 const std = @import("std");
-const vec2 = @import("vec2.zig");
-const vec3 = @import("vec3.zig");
+const vec2 = @import("../vectors/vec2.zig");
+const vec3 = @import("../vectors/vec3.zig");
 
 /// 3x3 matrix stored in column-major order for GPU compatibility
 /// Layout: [m00, m10, m20, m01, m11, m21, m02, m12, m22]

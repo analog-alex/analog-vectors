@@ -1,6 +1,6 @@
 // @analogAlex
 const std = @import("std");
-const vec3 = @import("vec3.zig");
+const vec3 = @import("../vectors/vec3.zig");
 
 pub const Quat = [4]f32; // x, y, z, w
 
