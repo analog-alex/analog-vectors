@@ -22,6 +22,17 @@ pub const mat4 = @import("matrices/mat4.zig");
 // Export quat module for library consumers
 pub const quat = @import("complex/quat.zig");
 
+// Export geometry modules for library consumers
+pub const ray = @import("geometry/ray.zig");
+pub const segment = @import("geometry/segment.zig");
+pub const plane = @import("geometry/plane.zig");
+pub const aabb = @import("geometry/aabb.zig");
+pub const obb = @import("geometry/obb.zig");
+pub const sphere = @import("geometry/sphere.zig");
+pub const capsule = @import("geometry/capsule.zig");
+pub const frustum = @import("geometry/frustum.zig");
+pub const intersect = @import("geometry/intersect.zig");
+
 // Export utility modules for library consumers
 pub const angle = @import("utils/angle.zig");
 pub const color = @import("utils/color.zig");
@@ -111,4 +122,59 @@ test "easing module is accessible" {
 test "interpolation module is accessible" {
     const val = interpolation.smootherstep(0.0, 1.0, 0.5);
     try std.testing.expectApproxEqAbs(0.5, val, 0.01);
+}
+
+test "ray module is accessible" {
+    const r = ray.from(vec3.from(0, 0, 0), vec3.from(1, 0, 0));
+    const p = ray.pointAt(r, 5);
+    try std.testing.expect(vec3.approxEqual(p, vec3.from(5, 0, 0), 0.0001));
+}
+
+test "segment module is accessible" {
+    const s = segment.from(vec3.from(0, 0, 0), vec3.from(10, 0, 0));
+    try std.testing.expectApproxEqAbs(@as(f32, 10.0), segment.length(s), 0.0001);
+}
+
+test "plane module is accessible" {
+    const p = plane.fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    try std.testing.expectApproxEqAbs(@as(f32, 5.0), plane.distanceToPoint(p, vec3.from(0, 5, 0)), 0.0001);
+}
+
+test "aabb module is accessible" {
+    const box = aabb.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    try std.testing.expect(aabb.containsPoint(box, vec3.from(0, 0, 0)));
+}
+
+test "obb module is accessible" {
+    const box = obb.fromAxisAligned(vec3.from(0, 0, 0), vec3.from(5, 5, 5));
+    try std.testing.expect(obb.containsPoint(box, vec3.from(0, 0, 0)));
+}
+
+test "sphere module is accessible" {
+    const s = sphere.from(vec3.from(0, 0, 0), 5);
+    try std.testing.expect(sphere.containsPoint(s, vec3.from(3, 4, 0)));
+}
+
+test "capsule module is accessible" {
+    const c = capsule.from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    try std.testing.expect(capsule.containsPoint(c, vec3.from(0, 5, 0)));
+}
+
+test "frustum module is accessible" {
+    const f = frustum.from(.{
+        plane.fromPointNormal(vec3.from(0, 0, -10), vec3.from(0, 0, 1)),
+        plane.fromPointNormal(vec3.from(0, 0, 10), vec3.from(0, 0, -1)),
+        plane.fromPointNormal(vec3.from(-10, 0, 0), vec3.from(1, 0, 0)),
+        plane.fromPointNormal(vec3.from(10, 0, 0), vec3.from(-1, 0, 0)),
+        plane.fromPointNormal(vec3.from(0, 10, 0), vec3.from(0, -1, 0)),
+        plane.fromPointNormal(vec3.from(0, -10, 0), vec3.from(0, 1, 0)),
+    });
+    try std.testing.expect(frustum.containsPoint(f, vec3.from(0, 0, 0)));
+}
+
+test "intersect module is accessible" {
+    const r = ray.from(vec3.from(-10, 0, 0), vec3.from(1, 0, 0));
+    const s = sphere.from(vec3.from(0, 0, 0), 3);
+    const hit = intersect.raySphere(r, s);
+    try std.testing.expect(hit != null);
 }
