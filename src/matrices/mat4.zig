@@ -1,7 +1,7 @@
 // @analogAlex
 const std = @import("std");
-const vec3 = @import("vec3.zig");
-const vec4 = @import("vec4.zig");
+const vec3 = @import("../vectors/vec3.zig");
+const vec4 = @import("../vectors/vec4.zig");
 
 /// 4x4 matrix stored in column-major order for GPU compatibility (OpenGL, Vulkan, WebGPU)
 /// This is the PRIMARY transformation matrix for 3D graphics

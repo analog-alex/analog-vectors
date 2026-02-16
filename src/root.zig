@@ -11,16 +11,16 @@ pub const vec3 = @import("vectors/vec3.zig");
 pub const vec4 = @import("vectors/vec4.zig");
 
 // Export mat2 module for library consumers
-pub const mat2 = @import("vectors/mat2.zig");
+pub const mat2 = @import("matrices/mat2.zig");
 
 // Export mat3 module for library consumers
-pub const mat3 = @import("vectors/mat3.zig");
+pub const mat3 = @import("matrices/mat3.zig");
 
 // Export mat4 module for library consumers
-pub const mat4 = @import("vectors/mat4.zig");
+pub const mat4 = @import("matrices/mat4.zig");
 
 // Export quat module for library consumers
-pub const quat = @import("vectors/quat.zig");
+pub const quat = @import("complex/quat.zig");
 
 test {
     std.testing.refAllDecls(@This());
