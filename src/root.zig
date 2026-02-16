@@ -22,6 +22,13 @@ pub const mat4 = @import("matrices/mat4.zig");
 // Export quat module for library consumers
 pub const quat = @import("complex/quat.zig");
 
+// Export utility modules for library consumers
+pub const angle = @import("utils/angle.zig");
+pub const color = @import("utils/color.zig");
+pub const random = @import("utils/random.zig");
+pub const constants = @import("utils/constants.zig");
+pub const math_utils = @import("utils/math.zig");
+
 test {
     std.testing.refAllDecls(@This());
 }
@@ -63,4 +70,33 @@ test "quat module is accessible" {
     const v = vec3.from(1, 2, 3);
     const result = quat.rotateVec(q, v);
     try std.testing.expect(vec3.approxEqual(result, v, 0.0001));
+}
+
+test "angle module is accessible" {
+    const rad = angle.degToRad(180);
+    try std.testing.expectApproxEqAbs(std.math.pi, rad, 0.0001);
+}
+
+test "color module is accessible" {
+    const red = color.RGB.from(1, 0, 0);
+    const hsv = color.rgbToHsv(red);
+    try std.testing.expectApproxEqAbs(0.0, hsv.h, 0.01);
+}
+
+test "random module is accessible" {
+    var prng = std.Random.DefaultPrng.init(12345);
+    const rng = prng.random();
+    const val = random.randomFloat(rng, 0, 10);
+    try std.testing.expect(val >= 0 and val <= 10);
+}
+
+test "constants module is accessible" {
+    const zero = constants.vec2_zero;
+    try std.testing.expectEqual(@as(f32, 0), zero[0]);
+    try std.testing.expectEqual(@as(f32, 0), zero[1]);
+}
+
+test "math_utils module is accessible" {
+    const result = math_utils.remap(5, 0, 10, 0, 100);
+    try std.testing.expectApproxEqAbs(50.0, result, 0.01);
 }
