@@ -33,6 +33,14 @@ pub const capsule = @import("geometry/capsule.zig");
 pub const frustum = @import("geometry/frustum.zig");
 pub const intersect = @import("geometry/intersect.zig");
 
+// Export SIMD geometry modules (Vec4-based) for library consumers
+pub const simd_ray = @import("geometry_simd/ray.zig");
+pub const simd_plane = @import("geometry_simd/plane.zig");
+pub const simd_aabb = @import("geometry_simd/aabb.zig");
+pub const simd_sphere = @import("geometry_simd/sphere.zig");
+pub const simd_intersect = @import("geometry_simd/intersect.zig");
+pub const simd_conversions = @import("geometry_simd/conversions.zig");
+
 // Export utility modules for library consumers
 pub const angle = @import("utils/angle.zig");
 pub const color = @import("utils/color.zig");
@@ -176,5 +184,43 @@ test "intersect module is accessible" {
     const r = ray.from(vec3.from(-10, 0, 0), vec3.from(1, 0, 0));
     const s = sphere.from(vec3.from(0, 0, 0), 3);
     const hit = intersect.raySphere(r, s);
+    try std.testing.expect(hit != null);
+}
+
+test "simd_conversions module is accessible" {
+    const v3 = vec3.from(1, 2, 3);
+    const point = simd_conversions.vec3ToPoint(v3);
+    try std.testing.expect(point[3] == 1);
+    const dir = simd_conversions.vec3ToDir(v3);
+    try std.testing.expect(dir[3] == 0);
+    const back = simd_conversions.vec4ToVec3(point);
+    try std.testing.expect(vec3.equal(back, v3));
+}
+
+test "simd_ray module is accessible" {
+    const r = simd_ray.from(vec4.from(0, 0, 0, 1), vec4.from(1, 0, 0, 0));
+    const p = simd_ray.pointAt(r, 5);
+    try std.testing.expect(vec4.approxEqual(p, vec4.from(5, 0, 0, 1), 0.0001));
+}
+
+test "simd_plane module is accessible" {
+    const p = simd_plane.fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    try std.testing.expectApproxEqAbs(@as(f32, 5.0), simd_plane.distanceToPoint(p, vec4.from(0, 5, 0, 1)), 0.0001);
+}
+
+test "simd_aabb module is accessible" {
+    const box = simd_aabb.from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    try std.testing.expect(simd_aabb.containsPoint(box, vec4.from(0, 0, 0, 1)));
+}
+
+test "simd_sphere module is accessible" {
+    const s = simd_sphere.from(vec4.from(0, 0, 0, 1), 5);
+    try std.testing.expect(simd_sphere.containsPoint(s, vec4.from(3, 4, 0, 1)));
+}
+
+test "simd_intersect module is accessible" {
+    const r = simd_ray.from(vec4.from(-10, 0, 0, 1), vec4.from(1, 0, 0, 0));
+    const s = simd_sphere.from(vec4.from(0, 0, 0, 1), 3);
+    const hit = simd_intersect.raySphere(r, s);
     try std.testing.expect(hit != null);
 }
