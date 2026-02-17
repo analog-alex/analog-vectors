@@ -1,13 +1,13 @@
 // @analogAlex
 const std = @import("std");
 
-pub const Vec4 = [4]f32;
+pub const Vec4 = @Vector(4, f32);
 
 // ===============
 // Construction & Accessors
 
 pub fn from(x: f32, y: f32, z: f32, w: f32) Vec4 {
-    return [4]f32{ x, y, z, w };
+    return Vec4{ x, y, z, w };
 }
 
 pub inline fn X(v: Vec4) f32 {
@@ -30,38 +30,38 @@ pub inline fn W(v: Vec4) f32 {
 // Essential Arithmetic
 
 pub fn sum(lhs: Vec4, rhs: Vec4) Vec4 {
-    return [4]f32{ lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2], lhs[3] + rhs[3] };
+    return lhs + rhs;
 }
 
 pub fn sub(lhs: Vec4, rhs: Vec4) Vec4 {
-    return [4]f32{ lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2], lhs[3] - rhs[3] };
+    return lhs - rhs;
 }
 
 pub fn mul(v: Vec4, scalar: f32) Vec4 {
-    return [4]f32{ v[0] * scalar, v[1] * scalar, v[2] * scalar, v[3] * scalar };
+    return v * @as(Vec4, @splat(scalar));
 }
 
 pub fn div(v: Vec4, scalar: f32) Vec4 {
-    return [4]f32{ v[0] / scalar, v[1] / scalar, v[2] / scalar, v[3] / scalar };
+    return v / @as(Vec4, @splat(scalar));
 }
 
 pub fn neg(v: Vec4) Vec4 {
-    return [4]f32{ -v[0], -v[1], -v[2], -v[3] };
+    return -v;
 }
 
 pub fn componentMul(lhs: Vec4, rhs: Vec4) Vec4 {
-    return [4]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1], lhs[2] * rhs[2], lhs[3] * rhs[3] };
+    return lhs * rhs;
 }
 
 pub fn componentDiv(lhs: Vec4, rhs: Vec4) Vec4 {
-    return [4]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1], lhs[2] / rhs[2], lhs[3] / rhs[3] };
+    return lhs / rhs;
 }
 
 // ===============
 // Length/Distance Operations
 
 pub inline fn lengthSquared(v: Vec4) f32 {
-    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
+    return @reduce(.Add, v * v);
 }
 
 pub fn length(v: Vec4) f32 {
@@ -86,7 +86,7 @@ pub inline fn distanceSquared(a: Vec4, b: Vec4) f32 {
 // Products
 
 pub inline fn dot(lhs: Vec4, rhs: Vec4) f32 {
-    return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
+    return @reduce(.Add, lhs * rhs);
 }
 
 // ===============
@@ -118,77 +118,56 @@ pub fn reflect(v: Vec4, normal: Vec4) Vec4 {
 // Interpolation & Clamping
 
 pub fn lerp(a: Vec4, b: Vec4, t: f32) Vec4 {
-    return [4]f32{
-        a[0] + (b[0] - a[0]) * t,
-        a[1] + (b[1] - a[1]) * t,
-        a[2] + (b[2] - a[2]) * t,
-        a[3] + (b[3] - a[3]) * t,
-    };
+    const tv: Vec4 = @splat(t);
+    return a + (b - a) * tv;
 }
 
 pub fn clamp(v: Vec4, min_v: Vec4, max_v: Vec4) Vec4 {
-    return [4]f32{
-        @max(min_v[0], @min(max_v[0], v[0])),
-        @max(min_v[1], @min(max_v[1], v[1])),
-        @max(min_v[2], @min(max_v[2], v[2])),
-        @max(min_v[3], @min(max_v[3], v[3])),
-    };
+    return @min(max_v, @max(min_v, v));
 }
 
 // ===============
 // Utility
 
 pub fn equal(a: Vec4, b: Vec4) bool {
-    return a[0] == b[0] and a[1] == b[1] and a[2] == b[2] and a[3] == b[3];
+    return @reduce(.And, a == b);
 }
 
 pub fn approxEqual(a: Vec4, b: Vec4, epsilon: f32) bool {
-    return @abs(a[0] - b[0]) <= epsilon and
-        @abs(a[1] - b[1]) <= epsilon and
-        @abs(a[2] - b[2]) <= epsilon and
-        @abs(a[3] - b[3]) <= epsilon;
+    const eps: Vec4 = @splat(epsilon);
+    return @reduce(.And, @abs(a - b) <= eps);
 }
 
 pub fn min(a: Vec4, b: Vec4) Vec4 {
-    return [4]f32{
-        @min(a[0], b[0]),
-        @min(a[1], b[1]),
-        @min(a[2], b[2]),
-        @min(a[3], b[3]),
-    };
+    return @min(a, b);
 }
 
 pub fn max(a: Vec4, b: Vec4) Vec4 {
-    return [4]f32{
-        @max(a[0], b[0]),
-        @max(a[1], b[1]),
-        @max(a[2], b[2]),
-        @max(a[3], b[3]),
-    };
+    return @max(a, b);
 }
 
 pub fn zero() Vec4 {
-    return [4]f32{ 0, 0, 0, 0 };
+    return @splat(0);
 }
 
 pub fn one() Vec4 {
-    return [4]f32{ 1, 1, 1, 1 };
+    return @splat(1);
 }
 
 pub fn unitX() Vec4 {
-    return [4]f32{ 1, 0, 0, 0 };
+    return Vec4{ 1, 0, 0, 0 };
 }
 
 pub fn unitY() Vec4 {
-    return [4]f32{ 0, 1, 0, 0 };
+    return Vec4{ 0, 1, 0, 0 };
 }
 
 pub fn unitZ() Vec4 {
-    return [4]f32{ 0, 0, 1, 0 };
+    return Vec4{ 0, 0, 1, 0 };
 }
 
 pub fn unitW() Vec4 {
-    return [4]f32{ 0, 0, 0, 1 };
+    return Vec4{ 0, 0, 0, 1 };
 }
 
 // ===============
