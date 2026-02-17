@@ -72,11 +72,11 @@ pub inline fn get(m: Mat4, row: usize, col: usize) f32 {
 
 pub inline fn getCol(m: Mat4, col: usize) vec4.Vec4 {
     const offset = col * 4;
-    return [4]f32{ m[offset], m[offset + 1], m[offset + 2], m[offset + 3] };
+    return vec4.Vec4{ m[offset], m[offset + 1], m[offset + 2], m[offset + 3] };
 }
 
 pub inline fn getRow(m: Mat4, row: usize) vec4.Vec4 {
-    return [4]f32{ m[row], m[row + 4], m[row + 8], m[row + 12] };
+    return vec4.Vec4{ m[row], m[row + 4], m[row + 8], m[row + 12] };
 }
 
 // ===============
@@ -209,7 +209,7 @@ pub fn transformVec3(m: Mat4, v: vec3.Vec3) vec3.Vec3 {
 }
 
 pub fn transformVec4(m: Mat4, v: vec4.Vec4) vec4.Vec4 {
-    return [4]f32{
+    return vec4.Vec4{
         m[0] * v[0] + m[4] * v[1] + m[8] * v[2] + m[12] * v[3],
         m[1] * v[0] + m[5] * v[1] + m[9] * v[2] + m[13] * v[3],
         m[2] * v[0] + m[6] * v[1] + m[10] * v[2] + m[14] * v[3],

@@ -25,12 +25,13 @@ pub const vec3_forward = [3]f32{ 0, 0, 1 };
 pub const vec3_back = [3]f32{ 0, 0, -1 };
 
 // Vector constants - Vec4
-pub const vec4_zero = [4]f32{ 0, 0, 0, 0 };
-pub const vec4_one = [4]f32{ 1, 1, 1, 1 };
-pub const vec4_unit_x = [4]f32{ 1, 0, 0, 0 };
-pub const vec4_unit_y = [4]f32{ 0, 1, 0, 0 };
-pub const vec4_unit_z = [4]f32{ 0, 0, 1, 0 };
-pub const vec4_unit_w = [4]f32{ 0, 0, 0, 1 };
+const Vec4 = @Vector(4, f32);
+pub const vec4_zero: Vec4 = .{ 0, 0, 0, 0 };
+pub const vec4_one: Vec4 = .{ 1, 1, 1, 1 };
+pub const vec4_unit_x: Vec4 = .{ 1, 0, 0, 0 };
+pub const vec4_unit_y: Vec4 = .{ 0, 1, 0, 0 };
+pub const vec4_unit_z: Vec4 = .{ 0, 0, 1, 0 };
+pub const vec4_unit_w: Vec4 = .{ 0, 0, 0, 1 };
 
 // Common color constants (RGB values in range [0, 1])
 pub const color_black = color.RGB.from(0, 0, 0);
