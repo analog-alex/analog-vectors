@@ -99,8 +99,8 @@ test "angle module is accessible" {
 }
 
 test "color module is accessible" {
-    const red = color.RGB.from(1, 0, 0);
-    const hsv = color.rgbToHsv(red);
+    const red = color.RGBA.fromRgb(1, 0, 0);
+    const hsv = color.rgbaToHsv(red);
     try std.testing.expectApproxEqAbs(0.0, hsv.h, 0.01);
 }
 
