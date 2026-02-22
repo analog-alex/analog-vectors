@@ -6,8 +6,25 @@ pub const Vec4 = @Vector(4, f32);
 // ===============
 // Construction & Accessors
 
-pub fn from(x: f32, y: f32, z: f32, w: f32) Vec4 {
+pub fn init(x: f32, y: f32, z: f32, w: f32) Vec4 {
     return Vec4{ x, y, z, w };
+}
+
+pub fn fromArray(values: [4]f32) Vec4 {
+    return init(values[0], values[1], values[2], values[3]);
+}
+
+pub fn fromVec2(v: [2]f32, z: f32, w: f32) Vec4 {
+    return init(v[0], v[1], z, w);
+}
+
+pub fn fromVec3(v: [3]f32, w: f32) Vec4 {
+    return init(v[0], v[1], v[2], w);
+}
+
+/// Deprecated: use init for direct component construction.
+pub fn from(x: f32, y: f32, z: f32, w: f32) Vec4 {
+    return init(x, y, z, w);
 }
 
 pub inline fn X(v: Vec4) f32 {
@@ -173,79 +190,104 @@ pub fn unitW() Vec4 {
 // ===============
 // Tests
 
-test "X returns the first coordinate" {
+test "init creates a vector from components" {
+    const v = init(1, 2, 3, 4);
+    try std.testing.expect(equal(v, .{ 1, 2, 3, 4 }));
+}
+
+test "fromArray creates vec4 from array" {
+    const v = fromArray(.{ 1, 2, 3, 4 });
+    try std.testing.expect(equal(v, init(1, 2, 3, 4)));
+}
+
+test "fromVec2 creates vec4 by appending z and w" {
+    const v = fromVec2(.{ 1, 2 }, 3, 4);
+    try std.testing.expect(equal(v, init(1, 2, 3, 4)));
+}
+
+test "fromVec3 creates vec4 by appending w" {
+    const v = fromVec3(.{ 1, 2, 3 }, 4);
+    try std.testing.expect(equal(v, init(1, 2, 3, 4)));
+}
+
+test "from is a deprecated alias for init" {
     const v = from(1, 2, 3, 4);
+    try std.testing.expect(equal(v, init(1, 2, 3, 4)));
+}
+
+test "X returns the first coordinate" {
+    const v = init(1, 2, 3, 4);
     const x = X(v);
     try std.testing.expect(x == 1);
 }
 
 test "Y returns the second coordinate" {
-    const v = from(1, 2, 3, 4);
+    const v = init(1, 2, 3, 4);
     const y = Y(v);
     try std.testing.expect(y == 2);
 }
 
 test "Z returns the third coordinate" {
-    const v = from(1, 2, 3, 4);
+    const v = init(1, 2, 3, 4);
     const z = Z(v);
     try std.testing.expect(z == 3);
 }
 
 test "W returns the fourth coordinate" {
-    const v = from(1, 2, 3, 4);
+    const v = init(1, 2, 3, 4);
     const w = W(v);
     try std.testing.expect(w == 4);
 }
 
 test "sum - can sum vectors" {
-    const l = from(1, 2, 3, 4);
-    const r = from(2, 4, 6, 8);
+    const l = init(1, 2, 3, 4);
+    const r = init(2, 4, 6, 8);
     const result = sum(l, r);
-    try std.testing.expect(equal(result, from(3, 6, 9, 12)));
+    try std.testing.expect(equal(result, init(3, 6, 9, 12)));
 }
 
 test "sub - can subtract vectors" {
-    const l = from(5, 7, 9, 11);
-    const r = from(2, 3, 4, 5);
+    const l = init(5, 7, 9, 11);
+    const r = init(2, 3, 4, 5);
     const result = sub(l, r);
-    try std.testing.expect(equal(result, from(3, 4, 5, 6)));
+    try std.testing.expect(equal(result, init(3, 4, 5, 6)));
 }
 
 test "mul - can multiply vector by scalar" {
-    const v = from(2, 3, 4, 5);
+    const v = init(2, 3, 4, 5);
     const scalar: f32 = 3;
     const result = mul(v, scalar);
-    try std.testing.expect(equal(result, from(6, 9, 12, 15)));
+    try std.testing.expect(equal(result, init(6, 9, 12, 15)));
 }
 
 test "div - can divide vector by scalar" {
-    const v = from(6, 9, 12, 15);
+    const v = init(6, 9, 12, 15);
     const scalar: f32 = 3;
     const result = div(v, scalar);
-    try std.testing.expect(equal(result, from(2, 3, 4, 5)));
+    try std.testing.expect(equal(result, init(2, 3, 4, 5)));
 }
 
 test "neg - can negate vector" {
-    const v = from(2, -3, 4, -5);
+    const v = init(2, -3, 4, -5);
     const result = neg(v);
-    try std.testing.expect(equal(result, from(-2, 3, -4, 5)));
+    try std.testing.expect(equal(result, init(-2, 3, -4, 5)));
 }
 
 test "componentMul - multiplies components element-wise" {
     // given
-    const a = from(2, 3, 4, 5);
-    const b = from(6, 7, 8, 9);
+    const a = init(2, 3, 4, 5);
+    const b = init(6, 7, 8, 9);
 
     // when
     const result = componentMul(a, b);
 
     // then
-    try std.testing.expect(equal(result, from(12, 21, 32, 45)));
+    try std.testing.expect(equal(result, init(12, 21, 32, 45)));
 }
 
 test "componentMul - handles zero vector" {
     // given
-    const a = from(5, 7, 9, 11);
+    const a = init(5, 7, 9, 11);
     const b = zero();
 
     // when
@@ -257,7 +299,7 @@ test "componentMul - handles zero vector" {
 
 test "componentMul - handles one vector as identity" {
     // given
-    const v = from(3, 4, 5, 6);
+    const v = init(3, 4, 5, 6);
     const identity = one();
 
     // when
@@ -269,19 +311,19 @@ test "componentMul - handles one vector as identity" {
 
 test "componentDiv - divides components element-wise" {
     // given
-    const a = from(12, 21, 32, 45);
-    const b = from(2, 3, 4, 5);
+    const a = init(12, 21, 32, 45);
+    const b = init(2, 3, 4, 5);
 
     // when
     const result = componentDiv(a, b);
 
     // then
-    try std.testing.expect(equal(result, from(6, 7, 8, 9)));
+    try std.testing.expect(equal(result, init(6, 7, 8, 9)));
 }
 
 test "componentDiv - handles one vector as identity" {
     // given
-    const v = from(6, 9, 12, 15);
+    const v = init(6, 9, 12, 15);
     const identity = one();
 
     // when
@@ -293,31 +335,31 @@ test "componentDiv - handles one vector as identity" {
 
 test "componentDiv - handles different divisors per component" {
     // given
-    const a = from(10, 20, 30, 40);
-    const b = from(2, 4, 5, 8);
+    const a = init(10, 20, 30, 40);
+    const b = init(2, 4, 5, 8);
 
     // when
     const result = componentDiv(a, b);
 
     // then
-    try std.testing.expect(equal(result, from(5, 5, 6, 5)));
+    try std.testing.expect(equal(result, init(5, 5, 6, 5)));
 }
 
 test "length - calculates magnitude" {
-    const v = from(2, 2, 1, 0);
+    const v = init(2, 2, 1, 0);
     const result = length(v);
     try std.testing.expect(result == 3);
 }
 
 test "normalize - creates unit vector" {
-    const v = from(2, 2, 1, 0);
+    const v = init(2, 2, 1, 0);
     const result = normalize(v);
     try std.testing.expect(@abs(length(result) - 1.0) < 0.0001);
 }
 
 test "dot - calculates dot product" {
-    const a = from(1, 2, 3, 4);
-    const b = from(5, 6, 7, 8);
+    const a = init(1, 2, 3, 4);
+    const b = init(5, 6, 7, 8);
     const result = dot(a, b);
     try std.testing.expect(result == 70);
 }
@@ -327,67 +369,67 @@ test "dot - calculates dot product" {
 
 test "project - projects onto x-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const onto = from(1, 0, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const onto = init(1, 0, 0, 0);
 
     // when
     const result = project(v, onto);
 
     // then
-    try std.testing.expect(equal(result, from(3, 0, 0, 0)));
+    try std.testing.expect(equal(result, init(3, 0, 0, 0)));
 }
 
 test "project - projects onto y-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const onto = from(0, 1, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const onto = init(0, 1, 0, 0);
 
     // when
     const result = project(v, onto);
 
     // then
-    try std.testing.expect(equal(result, from(0, 4, 0, 0)));
+    try std.testing.expect(equal(result, init(0, 4, 0, 0)));
 }
 
 test "project - projects onto z-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const onto = from(0, 0, 1, 0);
+    const v = init(3, 4, 5, 6);
+    const onto = init(0, 0, 1, 0);
 
     // when
     const result = project(v, onto);
 
     // then
-    try std.testing.expect(equal(result, from(0, 0, 5, 0)));
+    try std.testing.expect(equal(result, init(0, 0, 5, 0)));
 }
 
 test "project - projects onto w-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const onto = from(0, 0, 0, 1);
+    const v = init(3, 4, 5, 6);
+    const onto = init(0, 0, 0, 1);
 
     // when
     const result = project(v, onto);
 
     // then
-    try std.testing.expect(equal(result, from(0, 0, 0, 6)));
+    try std.testing.expect(equal(result, init(0, 0, 0, 6)));
 }
 
 test "project - projects onto diagonal vector" {
     // given
-    const v = from(8, 4, 4, 4);
-    const onto = from(1, 1, 1, 1);
+    const v = init(8, 4, 4, 4);
+    const onto = init(1, 1, 1, 1);
 
     // when
     const result = project(v, onto);
 
     // then
-    try std.testing.expect(equal(result, from(5, 5, 5, 5)));
+    try std.testing.expect(equal(result, init(5, 5, 5, 5)));
 }
 
 test "project - handles zero onto vector" {
     // given
-    const v = from(3, 4, 5, 6);
+    const v = init(3, 4, 5, 6);
     const onto = zero();
 
     // when
@@ -399,8 +441,8 @@ test "project - handles zero onto vector" {
 
 test "project - parallel vectors project fully" {
     // given
-    const v = from(6, 8, 10, 12);
-    const onto = from(3, 4, 5, 6);
+    const v = init(6, 8, 10, 12);
+    const onto = init(3, 4, 5, 6);
 
     // when
     const result = project(v, onto);
@@ -411,68 +453,68 @@ test "project - parallel vectors project fully" {
 
 test "reject - returns perpendicular component to x-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const ref = from(1, 0, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const ref = init(1, 0, 0, 0);
 
     // when
     const result = reject(v, ref);
 
     // then
-    try std.testing.expect(equal(result, from(0, 4, 5, 6)));
+    try std.testing.expect(equal(result, init(0, 4, 5, 6)));
 }
 
 test "reject - returns perpendicular component to y-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const ref = from(0, 1, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const ref = init(0, 1, 0, 0);
 
     // when
     const result = reject(v, ref);
 
     // then
-    try std.testing.expect(equal(result, from(3, 0, 5, 6)));
+    try std.testing.expect(equal(result, init(3, 0, 5, 6)));
 }
 
 test "reject - returns perpendicular component to z-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const ref = from(0, 0, 1, 0);
+    const v = init(3, 4, 5, 6);
+    const ref = init(0, 0, 1, 0);
 
     // when
     const result = reject(v, ref);
 
     // then
-    try std.testing.expect(equal(result, from(3, 4, 0, 6)));
+    try std.testing.expect(equal(result, init(3, 4, 0, 6)));
 }
 
 test "reject - returns perpendicular component to w-axis" {
     // given
-    const v = from(3, 4, 5, 6);
-    const ref = from(0, 0, 0, 1);
+    const v = init(3, 4, 5, 6);
+    const ref = init(0, 0, 0, 1);
 
     // when
     const result = reject(v, ref);
 
     // then
-    try std.testing.expect(equal(result, from(3, 4, 5, 0)));
+    try std.testing.expect(equal(result, init(3, 4, 5, 0)));
 }
 
 test "reject - returns perpendicular component to diagonal" {
     // given
-    const v = from(8, 4, 4, 4);
-    const ref = from(1, 1, 1, 1);
+    const v = init(8, 4, 4, 4);
+    const ref = init(1, 1, 1, 1);
 
     // when
     const result = reject(v, ref);
 
     // then
-    try std.testing.expect(equal(result, from(3, -1, -1, -1)));
+    try std.testing.expect(equal(result, init(3, -1, -1, -1)));
 }
 
 test "reject - returns original vector when ref is perpendicular" {
     // given
-    const v = from(0, 5, 0, 0);
-    const ref = from(1, 0, 0, 0);
+    const v = init(0, 5, 0, 0);
+    const ref = init(1, 0, 0, 0);
 
     // when
     const result = reject(v, ref);
@@ -483,8 +525,8 @@ test "reject - returns original vector when ref is perpendicular" {
 
 test "reject - parallel vectors reject to zero" {
     // given
-    const v = from(6, 8, 10, 12);
-    const ref = from(3, 4, 5, 6);
+    const v = init(6, 8, 10, 12);
+    const ref = init(3, 4, 5, 6);
 
     // when
     const result = reject(v, ref);
@@ -495,57 +537,57 @@ test "reject - parallel vectors reject to zero" {
 
 test "reflect - reflects across x-axis normal" {
     // given
-    const v = from(3, 4, 5, 6);
-    const normal = from(1, 0, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const normal = init(1, 0, 0, 0);
 
     // when
     const result = reflect(v, normal);
 
     // then
-    try std.testing.expect(equal(result, from(-3, 4, 5, 6)));
+    try std.testing.expect(equal(result, init(-3, 4, 5, 6)));
 }
 
 test "reflect - reflects across y-axis normal" {
     // given
-    const v = from(3, 4, 5, 6);
-    const normal = from(0, 1, 0, 0);
+    const v = init(3, 4, 5, 6);
+    const normal = init(0, 1, 0, 0);
 
     // when
     const result = reflect(v, normal);
 
     // then
-    try std.testing.expect(equal(result, from(3, -4, 5, 6)));
+    try std.testing.expect(equal(result, init(3, -4, 5, 6)));
 }
 
 test "reflect - reflects across z-axis normal" {
     // given
-    const v = from(3, 4, 5, 6);
-    const normal = from(0, 0, 1, 0);
+    const v = init(3, 4, 5, 6);
+    const normal = init(0, 0, 1, 0);
 
     // when
     const result = reflect(v, normal);
 
     // then
-    try std.testing.expect(equal(result, from(3, 4, -5, 6)));
+    try std.testing.expect(equal(result, init(3, 4, -5, 6)));
 }
 
 test "reflect - reflects across w-axis normal" {
     // given
-    const v = from(3, 4, 5, 6);
-    const normal = from(0, 0, 0, 1);
+    const v = init(3, 4, 5, 6);
+    const normal = init(0, 0, 0, 1);
 
     // when
     const result = reflect(v, normal);
 
     // then
-    try std.testing.expect(equal(result, from(3, 4, 5, -6)));
+    try std.testing.expect(equal(result, init(3, 4, 5, -6)));
 }
 
 test "reflect - reflects across diagonal normal" {
     // given
-    const v = from(1, 0, 0, 0);
+    const v = init(1, 0, 0, 0);
     const sqrt4_inv: f32 = 1.0 / 2.0;
-    const normal = from(sqrt4_inv, sqrt4_inv, sqrt4_inv, sqrt4_inv);
+    const normal = init(sqrt4_inv, sqrt4_inv, sqrt4_inv, sqrt4_inv);
 
     // when
     const result = reflect(v, normal);
@@ -553,25 +595,25 @@ test "reflect - reflects across diagonal normal" {
     // then
     const expected_x: f32 = 1.0 - 2.0 * sqrt4_inv * sqrt4_inv;
     const expected_yzw: f32 = -2.0 * sqrt4_inv * sqrt4_inv;
-    try std.testing.expect(approxEqual(result, from(expected_x, expected_yzw, expected_yzw, expected_yzw), 0.0001));
+    try std.testing.expect(approxEqual(result, init(expected_x, expected_yzw, expected_yzw, expected_yzw), 0.0001));
 }
 
 test "reflect - perpendicular vector reflects back" {
     // given
-    const v = from(0, 5, 0, 0);
-    const normal = from(0, 1, 0, 0);
+    const v = init(0, 5, 0, 0);
+    const normal = init(0, 1, 0, 0);
 
     // when
     const result = reflect(v, normal);
 
     // then
-    try std.testing.expect(equal(result, from(0, -5, 0, 0)));
+    try std.testing.expect(equal(result, init(0, -5, 0, 0)));
 }
 
 test "reflect - preserves magnitude" {
     // given
-    const v = from(3, 4, 5, 6);
-    const normal = normalize(from(1, 1, 1, 1));
+    const v = init(3, 4, 5, 6);
+    const normal = normalize(init(1, 1, 1, 1));
 
     // when
     const result = reflect(v, normal);
@@ -586,22 +628,22 @@ test "reflect - preserves magnitude" {
 // Interpolation & Clamping Tests
 
 test "lerp - interpolates at t=0.5" {
-    const a = from(0, 0, 0, 0);
-    const b = from(10, 20, 30, 40);
+    const a = init(0, 0, 0, 0);
+    const b = init(10, 20, 30, 40);
     const result = lerp(a, b, 0.5);
-    try std.testing.expect(equal(result, from(5, 10, 15, 20)));
+    try std.testing.expect(equal(result, init(5, 10, 15, 20)));
 }
 
 test "equal - returns true for equal vectors" {
-    const a = from(1, 2, 3, 4);
-    const b = from(1, 2, 3, 4);
+    const a = init(1, 2, 3, 4);
+    const b = init(1, 2, 3, 4);
     const result = equal(a, b);
     try std.testing.expect(result == true);
 }
 
 test "approxEqual - returns true for approximately equal vectors" {
-    const a = from(1.0001, 2.0001, 3.0001, 4.0001);
-    const b = from(1.0002, 2.0002, 3.0002, 4.0002);
+    const a = init(1.0001, 2.0001, 3.0001, 4.0001);
+    const b = init(1.0002, 2.0002, 3.0002, 4.0002);
     const result = approxEqual(a, b, 0.001);
     try std.testing.expect(result == true);
 }

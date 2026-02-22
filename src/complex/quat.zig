@@ -58,7 +58,7 @@ pub fn toAxisAngle(q: Quat) struct { axis: vec3.Vec3, angle: f32 } {
     }
 
     return .{
-        .axis = vec3.from(n[0] / s, n[1] / s, n[2] / s),
+        .axis = vec3.init(n[0] / s, n[1] / s, n[2] / s),
         .angle = half_angle * 2.0,
     };
 }
@@ -168,7 +168,7 @@ pub fn slerp(a: Quat, b: Quat, t: f32) Quat {
 pub fn rotateVec(q: Quat, v: vec3.Vec3) vec3.Vec3 {
     // Optimized rotation: v' = v + 2w(u × v) + 2(u × (u × v))
     // where u = (q.x, q.y, q.z) and w = q.w
-    const u = vec3.from(q[0], q[1], q[2]);
+    const u = vec3.init(q[0], q[1], q[2]);
     const uv = vec3.cross(u, v);
     const uuv = vec3.cross(u, uv);
     return vec3.sum(v, vec3.sum(vec3.mul(uv, 2 * q[3]), vec3.mul(uuv, 2)));
@@ -265,7 +265,7 @@ test "toAxisAngle - identity quaternion returns zero angle" {
 
 test "fromAxisAngle - round trip preserves rotation" {
     // given
-    const axis = vec3.normalize(vec3.from(1, 1, 1));
+    const axis = vec3.normalize(vec3.init(1, 1, 1));
     const angle: f32 = std.math.pi / 4.0;
 
     // when
@@ -508,7 +508,7 @@ test "slerp - takes shortest path with negative dot" {
 test "rotateVec - identity quaternion preserves vector" {
     // given
     const q = identity();
-    const v = vec3.from(1, 2, 3);
+    const v = vec3.init(1, 2, 3);
 
     // when
     const result = rotateVec(q, v);
@@ -520,55 +520,55 @@ test "rotateVec - identity quaternion preserves vector" {
 test "rotateVec - 90 degrees around z rotates x to y" {
     // given
     const q = fromAxisAngle(vec3.unitZ(), std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
 
     // when
     const result = rotateVec(q, v);
 
     // then
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 1, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 1, 0), 0.0001));
 }
 
 test "rotateVec - 90 degrees around x rotates y to z" {
     // given
     const q = fromAxisAngle(vec3.unitX(), std.math.pi / 2.0);
-    const v = vec3.from(0, 1, 0);
+    const v = vec3.init(0, 1, 0);
 
     // when
     const result = rotateVec(q, v);
 
     // then
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, 1), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, 1), 0.0001));
 }
 
 test "rotateVec - 90 degrees around y rotates z to x" {
     // given
     const q = fromAxisAngle(vec3.unitY(), std.math.pi / 2.0);
-    const v = vec3.from(0, 0, 1);
+    const v = vec3.init(0, 0, 1);
 
     // when
     const result = rotateVec(q, v);
 
     // then
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(1, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(1, 0, 0), 0.0001));
 }
 
 test "rotateVec - 180 degree rotation" {
     // given
     const q = fromAxisAngle(vec3.unitZ(), std.math.pi);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
 
     // when
     const result = rotateVec(q, v);
 
     // then
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(-1, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(-1, 0, 0), 0.0001));
 }
 
 test "rotateVec - preserves vector length" {
     // given
-    const q = fromAxisAngle(vec3.normalize(vec3.from(1, 1, 1)), std.math.pi / 3.0);
-    const v = vec3.from(2, 3, 6);
+    const q = fromAxisAngle(vec3.normalize(vec3.init(1, 1, 1)), std.math.pi / 3.0);
+    const v = vec3.init(2, 3, 6);
 
     // when
     const result = rotateVec(q, v);
@@ -580,7 +580,7 @@ test "rotateVec - preserves vector length" {
 test "rotateVec - full 360 rotation returns original" {
     // given
     const q = fromAxisAngle(vec3.unitY(), std.math.pi * 2.0);
-    const v = vec3.from(2, 3, 4);
+    const v = vec3.init(2, 3, 4);
 
     // when
     const result = rotateVec(q, v);
@@ -593,7 +593,7 @@ test "rotateVec - composed rotations match multiply" {
     // given
     const q1 = fromAxisAngle(vec3.unitX(), std.math.pi / 4.0);
     const q2 = fromAxisAngle(vec3.unitZ(), std.math.pi / 3.0);
-    const v = vec3.from(1, 2, 3);
+    const v = vec3.init(1, 2, 3);
 
     // when — rotate by q1 then q2 vs multiply
     const step1 = rotateVec(q1, v);

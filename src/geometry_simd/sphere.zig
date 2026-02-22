@@ -50,7 +50,7 @@ pub fn surfaceArea(s: Sphere) f32 {
 
 test "from - creates sphere with w=1 center" {
     // given / when
-    const s = from(vec4.from(1, 2, 3, 0), 5);
+    const s = from(vec4.init(1, 2, 3, 0), 5);
 
     // then
     try std.testing.expect(s.center[3] == 1);
@@ -59,26 +59,26 @@ test "from - creates sphere with w=1 center" {
 
 test "containsPoint - true when inside" {
     // given
-    const s = from(vec4.from(0, 0, 0, 1), 5);
+    const s = from(vec4.init(0, 0, 0, 1), 5);
 
     // when / then
-    try std.testing.expect(containsPoint(s, vec4.from(0, 0, 0, 1)));
-    try std.testing.expect(containsPoint(s, vec4.from(3, 4, 0, 1)));
-    try std.testing.expect(containsPoint(s, vec4.from(5, 0, 0, 1))); // on boundary
+    try std.testing.expect(containsPoint(s, vec4.init(0, 0, 0, 1)));
+    try std.testing.expect(containsPoint(s, vec4.init(3, 4, 0, 1)));
+    try std.testing.expect(containsPoint(s, vec4.init(5, 0, 0, 1))); // on boundary
 }
 
 test "containsPoint - false when outside" {
     // given
-    const s = from(vec4.from(0, 0, 0, 1), 5);
+    const s = from(vec4.init(0, 0, 0, 1), 5);
 
     // when / then
-    try std.testing.expect(!containsPoint(s, vec4.from(6, 0, 0, 1)));
+    try std.testing.expect(!containsPoint(s, vec4.init(6, 0, 0, 1)));
 }
 
 test "overlapsSphere - true for overlapping spheres" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), 3);
-    const b = from(vec4.from(4, 0, 0, 1), 2);
+    const a = from(vec4.init(0, 0, 0, 1), 3);
+    const b = from(vec4.init(4, 0, 0, 1), 2);
 
     // when / then
     try std.testing.expect(overlapsSphere(a, b));
@@ -86,8 +86,8 @@ test "overlapsSphere - true for overlapping spheres" {
 
 test "overlapsSphere - false for separated spheres" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), 1);
-    const b = from(vec4.from(5, 0, 0, 1), 1);
+    const a = from(vec4.init(0, 0, 0, 1), 1);
+    const b = from(vec4.init(5, 0, 0, 1), 1);
 
     // when / then
     try std.testing.expect(!overlapsSphere(a, b));
@@ -95,8 +95,8 @@ test "overlapsSphere - false for separated spheres" {
 
 test "overlapsSphere - true for touching spheres" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), 2);
-    const b = from(vec4.from(5, 0, 0, 1), 3);
+    const a = from(vec4.init(0, 0, 0, 1), 2);
+    const b = from(vec4.init(5, 0, 0, 1), 3);
 
     // when / then
     try std.testing.expect(overlapsSphere(a, b));
@@ -104,10 +104,10 @@ test "overlapsSphere - true for touching spheres" {
 
 test "distanceToPoint - zero when inside" {
     // given
-    const s = from(vec4.from(0, 0, 0, 1), 5);
+    const s = from(vec4.init(0, 0, 0, 1), 5);
 
     // when
-    const dist = distanceToPoint(s, vec4.from(2, 0, 0, 1));
+    const dist = distanceToPoint(s, vec4.init(2, 0, 0, 1));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 0.0), dist, 0.0001);
@@ -115,10 +115,10 @@ test "distanceToPoint - zero when inside" {
 
 test "distanceToPoint - positive when outside" {
     // given
-    const s = from(vec4.from(0, 0, 0, 1), 5);
+    const s = from(vec4.init(0, 0, 0, 1), 5);
 
     // when
-    const dist = distanceToPoint(s, vec4.from(8, 0, 0, 1));
+    const dist = distanceToPoint(s, vec4.init(8, 0, 0, 1));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 3.0), dist, 0.0001);

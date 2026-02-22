@@ -160,8 +160,8 @@ test "from creates matrix with correct element ordering" {
 }
 
 test "fromCols creates matrix from column vectors" {
-    const col0 = vec2.from(1, 2);
-    const col1 = vec2.from(3, 4);
+    const col0 = vec2.init(1, 2);
+    const col1 = vec2.init(3, 4);
     const m = fromCols(col0, col1);
     try std.testing.expect(equal(m, from(1, 3, 2, 4)));
 }
@@ -170,16 +170,16 @@ test "getCol returns correct column vector" {
     const m = from(1, 2, 3, 4);
     const col0 = getCol(m, 0);
     const col1 = getCol(m, 1);
-    try std.testing.expect(vec2.equal(col0, vec2.from(1, 3)));
-    try std.testing.expect(vec2.equal(col1, vec2.from(2, 4)));
+    try std.testing.expect(vec2.equal(col0, vec2.init(1, 3)));
+    try std.testing.expect(vec2.equal(col1, vec2.init(2, 4)));
 }
 
 test "getRow returns correct row vector" {
     const m = from(1, 2, 3, 4);
     const row0 = getRow(m, 0);
     const row1 = getRow(m, 1);
-    try std.testing.expect(vec2.equal(row0, vec2.from(1, 2)));
-    try std.testing.expect(vec2.equal(row1, vec2.from(3, 4)));
+    try std.testing.expect(vec2.equal(row0, vec2.init(1, 2)));
+    try std.testing.expect(vec2.equal(row1, vec2.init(3, 4)));
 }
 
 test "multiply - identity matrix" {
@@ -224,15 +224,15 @@ test "inverse - returns null for singular matrix" {
 
 test "transformVec2 transforms vector correctly" {
     const m = rotation(std.math.pi / 2.0);
-    const v = vec2.from(1, 0);
+    const v = vec2.init(1, 0);
     const result = transformVec2(m, v);
-    try std.testing.expect(vec2.approxEqual(result, vec2.from(0, 1), 0.0001));
+    try std.testing.expect(vec2.approxEqual(result, vec2.init(0, 1), 0.0001));
 }
 
 test "rotation creates rotation matrix" {
     const angle: f32 = std.math.pi / 4.0;
     const m = rotation(angle);
-    const v = vec2.from(1, 0);
+    const v = vec2.init(1, 0);
     const rotated = transformVec2(m, v);
 
     const expected_x = @cos(angle);
@@ -243,9 +243,9 @@ test "rotation creates rotation matrix" {
 
 test "scaling creates scaling matrix" {
     const m = scaling(2, 3);
-    const v = vec2.from(4, 5);
+    const v = vec2.init(4, 5);
     const scaled = transformVec2(m, v);
-    try std.testing.expect(vec2.equal(scaled, vec2.from(8, 15)));
+    try std.testing.expect(vec2.equal(scaled, vec2.init(8, 15)));
 }
 
 test "add matrices" {

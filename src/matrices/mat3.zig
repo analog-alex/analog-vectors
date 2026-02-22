@@ -230,9 +230,9 @@ test "from creates matrix with correct element ordering" {
 }
 
 test "fromCols creates matrix from column vectors" {
-    const col0 = vec3.from(1, 2, 3);
-    const col1 = vec3.from(4, 5, 6);
-    const col2 = vec3.from(7, 8, 9);
+    const col0 = vec3.init(1, 2, 3);
+    const col1 = vec3.init(4, 5, 6);
+    const col2 = vec3.init(7, 8, 9);
     const m = fromCols(col0, col1, col2);
     try std.testing.expect(equal(m, from(1, 4, 7, 2, 5, 8, 3, 6, 9)));
 }
@@ -271,56 +271,56 @@ test "inverse - returns null for singular matrix" {
 
 test "transformVec2 - 2D translation" {
     const m = translation2D(10, 20);
-    const v = vec2.from(5, 5);
+    const v = vec2.init(5, 5);
     const result = transformVec2(m, v);
-    try std.testing.expect(vec2.equal(result, vec2.from(15, 25)));
+    try std.testing.expect(vec2.equal(result, vec2.init(15, 25)));
 }
 
 test "transformVec3 transforms vector correctly" {
     const m = rotationZ(std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 1, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 1, 0), 0.0001));
 }
 
 test "translation2D creates correct matrix" {
     const m = translation2D(5, 10);
-    const v = vec2.from(0, 0);
+    const v = vec2.init(0, 0);
     const translated = transformVec2(m, v);
-    try std.testing.expect(vec2.equal(translated, vec2.from(5, 10)));
+    try std.testing.expect(vec2.equal(translated, vec2.init(5, 10)));
 }
 
 test "rotation2D creates rotation matrix" {
     const m = rotation2D(std.math.pi / 2.0);
-    const v = vec2.from(1, 0);
+    const v = vec2.init(1, 0);
     const rotated = transformVec2(m, v);
-    try std.testing.expect(vec2.approxEqual(rotated, vec2.from(0, 1), 0.0001));
+    try std.testing.expect(vec2.approxEqual(rotated, vec2.init(0, 1), 0.0001));
 }
 
 test "scaling2D creates scaling matrix" {
     const m = scaling2D(2, 3);
-    const v = vec2.from(4, 5);
+    const v = vec2.init(4, 5);
     const scaled = transformVec2(m, v);
-    try std.testing.expect(vec2.equal(scaled, vec2.from(8, 15)));
+    try std.testing.expect(vec2.equal(scaled, vec2.init(8, 15)));
 }
 
 test "rotationX rotates around x-axis" {
     const m = rotationX(std.math.pi / 2.0);
-    const v = vec3.from(0, 1, 0);
+    const v = vec3.init(0, 1, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, 1), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, 1), 0.0001));
 }
 
 test "rotationY rotates around y-axis" {
     const m = rotationY(std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, -1), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, -1), 0.0001));
 }
 
 test "rotationZ rotates around z-axis" {
     const m = rotationZ(std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 1, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 1, 0), 0.0001));
 }

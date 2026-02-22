@@ -97,7 +97,7 @@ pub fn volume(box: AABB) f32 {
 
 test "from - creates AABB with min and max" {
     // given / when
-    const box = from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const box = from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // then
     try std.testing.expect(box.min[0] == -1 and box.min[1] == -1 and box.min[2] == -1);
@@ -107,46 +107,46 @@ test "from - creates AABB with min and max" {
 
 test "fromCenterExtents - creates AABB from center and half-extents" {
     // given / when
-    const box = fromCenterExtents(vec4.from(0, 0, 0, 1), vec4.from(2, 3, 4, 0));
+    const box = fromCenterExtents(vec4.init(0, 0, 0, 1), vec4.init(2, 3, 4, 0));
 
     // then
-    try std.testing.expect(vec4.approxEqual(box.min, vec4.from(-2, -3, -4, 1), 0.0001));
-    try std.testing.expect(vec4.approxEqual(box.max, vec4.from(2, 3, 4, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(box.min, vec4.init(-2, -3, -4, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(box.max, vec4.init(2, 3, 4, 1), 0.0001));
 }
 
 test "center - returns center point" {
     // given
-    const box = from(vec4.from(0, 0, 0, 1), vec4.from(10, 10, 10, 1));
+    const box = from(vec4.init(0, 0, 0, 1), vec4.init(10, 10, 10, 1));
 
     // when
     const c = center(box);
 
     // then
-    try std.testing.expect(vec4.approxEqual(c, vec4.from(5, 5, 5, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(c, vec4.init(5, 5, 5, 1), 0.0001));
 }
 
 test "containsPoint - true when inside" {
     // given
-    const box = from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const box = from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when / then
-    try std.testing.expect(containsPoint(box, vec4.from(0, 0, 0, 1)));
-    try std.testing.expect(containsPoint(box, vec4.from(1, 1, 1, 1))); // on boundary
+    try std.testing.expect(containsPoint(box, vec4.init(0, 0, 0, 1)));
+    try std.testing.expect(containsPoint(box, vec4.init(1, 1, 1, 1))); // on boundary
 }
 
 test "containsPoint - false when outside" {
     // given
-    const box = from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const box = from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when / then
-    try std.testing.expect(!containsPoint(box, vec4.from(2, 0, 0, 1)));
-    try std.testing.expect(!containsPoint(box, vec4.from(0, -2, 0, 1)));
+    try std.testing.expect(!containsPoint(box, vec4.init(2, 0, 0, 1)));
+    try std.testing.expect(!containsPoint(box, vec4.init(0, -2, 0, 1)));
 }
 
 test "overlaps - true for overlapping AABBs" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), vec4.from(2, 2, 2, 1));
-    const b = from(vec4.from(1, 1, 1, 1), vec4.from(3, 3, 3, 1));
+    const a = from(vec4.init(0, 0, 0, 1), vec4.init(2, 2, 2, 1));
+    const b = from(vec4.init(1, 1, 1, 1), vec4.init(3, 3, 3, 1));
 
     // when / then
     try std.testing.expect(overlaps(a, b));
@@ -154,8 +154,8 @@ test "overlaps - true for overlapping AABBs" {
 
 test "overlaps - false for separated AABBs" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), vec4.from(1, 1, 1, 1));
-    const b = from(vec4.from(2, 2, 2, 1), vec4.from(3, 3, 3, 1));
+    const a = from(vec4.init(0, 0, 0, 1), vec4.init(1, 1, 1, 1));
+    const b = from(vec4.init(2, 2, 2, 1), vec4.init(3, 3, 3, 1));
 
     // when / then
     try std.testing.expect(!overlaps(a, b));
@@ -163,8 +163,8 @@ test "overlaps - false for separated AABBs" {
 
 test "overlaps - true for touching AABBs" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), vec4.from(1, 1, 1, 1));
-    const b = from(vec4.from(1, 0, 0, 1), vec4.from(2, 1, 1, 1));
+    const a = from(vec4.init(0, 0, 0, 1), vec4.init(1, 1, 1, 1));
+    const b = from(vec4.init(1, 0, 0, 1), vec4.init(2, 1, 1, 1));
 
     // when / then
     try std.testing.expect(overlaps(a, b));
@@ -172,32 +172,32 @@ test "overlaps - true for touching AABBs" {
 
 test "closestPointToPoint - returns point when inside" {
     // given
-    const box = from(vec4.from(0, 0, 0, 1), vec4.from(10, 10, 10, 1));
-    const p = vec4.from(5, 5, 5, 1);
+    const box = from(vec4.init(0, 0, 0, 1), vec4.init(10, 10, 10, 1));
+    const p = vec4.init(5, 5, 5, 1);
 
     // when
     const closest = closestPointToPoint(box, p);
 
     // then
-    try std.testing.expect(vec4.approxEqual(closest, vec4.from(5, 5, 5, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(closest, vec4.init(5, 5, 5, 1), 0.0001));
 }
 
 test "closestPointToPoint - clamps to surface when outside" {
     // given
-    const box = from(vec4.from(0, 0, 0, 1), vec4.from(10, 10, 10, 1));
-    const p = vec4.from(15, 5, -3, 1);
+    const box = from(vec4.init(0, 0, 0, 1), vec4.init(10, 10, 10, 1));
+    const p = vec4.init(15, 5, -3, 1);
 
     // when
     const closest = closestPointToPoint(box, p);
 
     // then
-    try std.testing.expect(vec4.approxEqual(closest, vec4.from(10, 5, 0, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(closest, vec4.init(10, 5, 0, 1), 0.0001));
 }
 
 test "merge - creates enclosing AABB" {
     // given
-    const a = from(vec4.from(0, 0, 0, 1), vec4.from(2, 2, 2, 1));
-    const b = from(vec4.from(-1, 1, -1, 1), vec4.from(1, 3, 1, 1));
+    const a = from(vec4.init(0, 0, 0, 1), vec4.init(2, 2, 2, 1));
+    const b = from(vec4.init(-1, 1, -1, 1), vec4.init(1, 3, 1, 1));
 
     // when
     const merged = merge(a, b);
@@ -209,7 +209,7 @@ test "merge - creates enclosing AABB" {
 
 test "volume - calculates correct volume" {
     // given
-    const box = from(vec4.from(0, 0, 0, 1), vec4.from(2, 3, 4, 1));
+    const box = from(vec4.init(0, 0, 0, 1), vec4.init(2, 3, 4, 1));
 
     // when
     const vol = volume(box);
@@ -220,7 +220,7 @@ test "volume - calculates correct volume" {
 
 test "surfaceArea - calculates correct surface area" {
     // given
-    const box = from(vec4.from(0, 0, 0, 1), vec4.from(2, 3, 4, 1));
+    const box = from(vec4.init(0, 0, 0, 1), vec4.init(2, 3, 4, 1));
 
     // when
     const sa = surfaceArea(box);

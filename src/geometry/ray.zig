@@ -26,34 +26,34 @@ pub inline fn pointAt(r: Ray, t: f32) Vec3 {
 
 test "from - normalizes direction" {
     // given
-    const origin = vec3.from(0, 0, 0);
-    const dir = vec3.from(2, 0, 0);
+    const origin = vec3.init(0, 0, 0);
+    const dir = vec3.init(2, 0, 0);
 
     // when
     const r = from(origin, dir);
 
     // then
-    try std.testing.expect(vec3.approxEqual(r.direction, vec3.from(1, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(r.direction, vec3.init(1, 0, 0), 0.0001));
 }
 
 test "pointAt - returns point along ray" {
     // given
-    const r = from(vec3.from(1, 2, 3), vec3.from(1, 0, 0));
+    const r = from(vec3.init(1, 2, 3), vec3.init(1, 0, 0));
 
     // when
     const p = pointAt(r, 5);
 
     // then
-    try std.testing.expect(vec3.approxEqual(p, vec3.from(6, 2, 3), 0.0001));
+    try std.testing.expect(vec3.approxEqual(p, vec3.init(6, 2, 3), 0.0001));
 }
 
 test "pointAt - t=0 returns origin" {
     // given
-    const r = from(vec3.from(3, 4, 5), vec3.from(0, 1, 0));
+    const r = from(vec3.init(3, 4, 5), vec3.init(0, 1, 0));
 
     // when
     const p = pointAt(r, 0);
 
     // then
-    try std.testing.expect(vec3.approxEqual(p, vec3.from(3, 4, 5), 0.0001));
+    try std.testing.expect(vec3.approxEqual(p, vec3.init(3, 4, 5), 0.0001));
 }

@@ -70,8 +70,8 @@ fn normalizeNormal(normal: Vec4) Vec4 {
 
 test "fromPointNormal - creates plane through point with normal" {
     // given
-    const point = vec4.from(0, 5, 0, 1);
-    const normal = vec4.from(0, 1, 0, 0);
+    const point = vec4.init(0, 5, 0, 1);
+    const normal = vec4.init(0, 1, 0, 0);
 
     // when
     const p = fromPointNormal(point, normal);
@@ -82,10 +82,10 @@ test "fromPointNormal - creates plane through point with normal" {
 
 test "signedDistanceToPoint - positive when in front" {
     // given
-    const p = fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const p = fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
-    const dist = signedDistanceToPoint(p, vec4.from(0, 5, 0, 1));
+    const dist = signedDistanceToPoint(p, vec4.init(0, 5, 0, 1));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 5.0), dist, 0.0001);
@@ -93,10 +93,10 @@ test "signedDistanceToPoint - positive when in front" {
 
 test "signedDistanceToPoint - negative when behind" {
     // given
-    const p = fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const p = fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
-    const dist = signedDistanceToPoint(p, vec4.from(0, -3, 0, 1));
+    const dist = signedDistanceToPoint(p, vec4.init(0, -3, 0, 1));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, -3.0), dist, 0.0001);
@@ -104,10 +104,10 @@ test "signedDistanceToPoint - negative when behind" {
 
 test "distanceToPoint - returns absolute distance" {
     // given
-    const p = fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const p = fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
-    const dist = distanceToPoint(p, vec4.from(0, -3, 0, 1));
+    const dist = distanceToPoint(p, vec4.init(0, -3, 0, 1));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 3.0), dist, 0.0001);
@@ -115,29 +115,29 @@ test "distanceToPoint - returns absolute distance" {
 
 test "closestPointToPoint - projects onto plane" {
     // given
-    const p = fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
-    const point = vec4.from(3, 7, 4, 1);
+    const p = fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
+    const point = vec4.init(3, 7, 4, 1);
 
     // when
     const closest = closestPointToPoint(p, point);
 
     // then
-    try std.testing.expect(vec4.approxEqual(closest, vec4.from(3, 0, 4, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(closest, vec4.init(3, 0, 4, 1), 0.0001));
 }
 
 test "isPointInFront - returns true for points on normal side" {
     // given
-    const p = fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const p = fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when / then
-    try std.testing.expect(isPointInFront(p, vec4.from(0, 1, 0, 1)));
-    try std.testing.expect(!isPointInFront(p, vec4.from(0, -1, 0, 1)));
+    try std.testing.expect(isPointInFront(p, vec4.init(0, 1, 0, 1)));
+    try std.testing.expect(!isPointInFront(p, vec4.init(0, -1, 0, 1)));
 }
 
 test "from - creates plane with explicit d" {
     // given / when
-    const p = from(vec4.from(0, 1, 0, 0), -5);
+    const p = from(vec4.init(0, 1, 0, 0), -5);
 
     // then
-    try std.testing.expectApproxEqAbs(@as(f32, 0.0), signedDistanceToPoint(p, vec4.from(0, 5, 0, 1)), 0.0001);
+    try std.testing.expectApproxEqAbs(@as(f32, 0.0), signedDistanceToPoint(p, vec4.init(0, 5, 0, 1)), 0.0001);
 }

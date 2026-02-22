@@ -74,7 +74,7 @@ pub fn rayPlane(ray: Ray, p: Plane) ?HitRecord {
 
 pub fn rayAABB(ray: Ray, box: AABB) ?HitRecord {
     // Compute inverse direction to avoid divisions in the loop
-    const inv_dir = vec3.from(
+    const inv_dir = vec3.init(
         if (ray.direction[0] != 0) 1.0 / ray.direction[0] else std.math.inf(f32),
         if (ray.direction[1] != 0) 1.0 / ray.direction[1] else std.math.inf(f32),
         if (ray.direction[2] != 0) 1.0 / ray.direction[2] else std.math.inf(f32),
@@ -112,11 +112,11 @@ fn computeAABBNormal(box: AABB, point: Vec3) Vec3 {
     const dz = @abs(@abs(d[2]) - he[2]);
 
     if (dx < epsilon and dx <= dy and dx <= dz) {
-        return if (d[0] > 0) vec3.from(1, 0, 0) else vec3.from(-1, 0, 0);
+        return if (d[0] > 0) vec3.init(1, 0, 0) else vec3.init(-1, 0, 0);
     } else if (dy < epsilon and dy <= dz) {
-        return if (d[1] > 0) vec3.from(0, 1, 0) else vec3.from(0, -1, 0);
+        return if (d[1] > 0) vec3.init(0, 1, 0) else vec3.init(0, -1, 0);
     } else {
-        return if (d[2] > 0) vec3.from(0, 0, 1) else vec3.from(0, 0, -1);
+        return if (d[2] > 0) vec3.init(0, 0, 1) else vec3.init(0, 0, -1);
     }
 }
 
@@ -125,8 +125,8 @@ fn computeAABBNormal(box: AABB, point: Vec3) Vec3 {
 
 test "raySphere - hit from outside" {
     // given
-    const ray = ray_mod.from(vec3.from(-10, 0, 0), vec3.from(1, 0, 0));
-    const s = sphere_mod.from(vec3.from(0, 0, 0), 3);
+    const ray = ray_mod.from(vec3.init(-10, 0, 0), vec3.init(1, 0, 0));
+    const s = sphere_mod.from(vec3.init(0, 0, 0), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -134,14 +134,14 @@ test "raySphere - hit from outside" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 7.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.from(-3, 0, 0), 0.001));
-    try std.testing.expect(vec3.approxEqual(hit.?.normal, vec3.from(-1, 0, 0), 0.001));
+    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.init(-3, 0, 0), 0.001));
+    try std.testing.expect(vec3.approxEqual(hit.?.normal, vec3.init(-1, 0, 0), 0.001));
 }
 
 test "raySphere - miss" {
     // given
-    const ray = ray_mod.from(vec3.from(-10, 0, 0), vec3.from(0, 1, 0));
-    const s = sphere_mod.from(vec3.from(0, 0, 0), 3);
+    const ray = ray_mod.from(vec3.init(-10, 0, 0), vec3.init(0, 1, 0));
+    const s = sphere_mod.from(vec3.init(0, 0, 0), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -152,8 +152,8 @@ test "raySphere - miss" {
 
 test "raySphere - ray origin inside sphere" {
     // given
-    const ray = ray_mod.from(vec3.from(0, 0, 0), vec3.from(1, 0, 0));
-    const s = sphere_mod.from(vec3.from(0, 0, 0), 5);
+    const ray = ray_mod.from(vec3.init(0, 0, 0), vec3.init(1, 0, 0));
+    const s = sphere_mod.from(vec3.init(0, 0, 0), 5);
 
     // when
     const hit = raySphere(ray, s);
@@ -165,8 +165,8 @@ test "raySphere - ray origin inside sphere" {
 
 test "raySphere - ray pointing away from sphere" {
     // given
-    const ray = ray_mod.from(vec3.from(-10, 0, 0), vec3.from(-1, 0, 0));
-    const s = sphere_mod.from(vec3.from(0, 0, 0), 3);
+    const ray = ray_mod.from(vec3.init(-10, 0, 0), vec3.init(-1, 0, 0));
+    const s = sphere_mod.from(vec3.init(0, 0, 0), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -177,8 +177,8 @@ test "raySphere - ray pointing away from sphere" {
 
 test "raySphere - tangent hit" {
     // given
-    const ray = ray_mod.from(vec3.from(-10, 3, 0), vec3.from(1, 0, 0));
-    const s = sphere_mod.from(vec3.from(0, 0, 0), 3);
+    const ray = ray_mod.from(vec3.init(-10, 3, 0), vec3.init(1, 0, 0));
+    const s = sphere_mod.from(vec3.init(0, 0, 0), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -193,8 +193,8 @@ test "raySphere - tangent hit" {
 
 test "rayPlane - hits plane from front" {
     // given
-    const ray = ray_mod.from(vec3.from(0, 5, 0), vec3.from(0, -1, 0));
-    const p = plane_mod.fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const ray = ray_mod.from(vec3.init(0, 5, 0), vec3.init(0, -1, 0));
+    const p = plane_mod.fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -202,13 +202,13 @@ test "rayPlane - hits plane from front" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 5.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.from(0, 0, 0), 0.001));
+    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.init(0, 0, 0), 0.001));
 }
 
 test "rayPlane - hits plane from back" {
     // given
-    const ray = ray_mod.from(vec3.from(0, -5, 0), vec3.from(0, 1, 0));
-    const p = plane_mod.fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const ray = ray_mod.from(vec3.init(0, -5, 0), vec3.init(0, 1, 0));
+    const p = plane_mod.fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -220,8 +220,8 @@ test "rayPlane - hits plane from back" {
 
 test "rayPlane - parallel to plane" {
     // given
-    const ray = ray_mod.from(vec3.from(0, 5, 0), vec3.from(1, 0, 0));
-    const p = plane_mod.fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const ray = ray_mod.from(vec3.init(0, 5, 0), vec3.init(1, 0, 0));
+    const p = plane_mod.fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -232,8 +232,8 @@ test "rayPlane - parallel to plane" {
 
 test "rayPlane - plane behind ray" {
     // given
-    const ray = ray_mod.from(vec3.from(0, 5, 0), vec3.from(0, 1, 0));
-    const p = plane_mod.fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const ray = ray_mod.from(vec3.init(0, 5, 0), vec3.init(0, 1, 0));
+    const p = plane_mod.fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -247,8 +247,8 @@ test "rayPlane - plane behind ray" {
 
 test "rayAABB - hit from outside" {
     // given
-    const ray = ray_mod.from(vec3.from(-5, 0, 0), vec3.from(1, 0, 0));
-    const box = aabb_mod.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    const ray = ray_mod.from(vec3.init(-5, 0, 0), vec3.init(1, 0, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -256,13 +256,13 @@ test "rayAABB - hit from outside" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 4.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.from(-1, 0, 0), 0.01));
+    try std.testing.expect(vec3.approxEqual(hit.?.point, vec3.init(-1, 0, 0), 0.01));
 }
 
 test "rayAABB - miss" {
     // given
-    const ray = ray_mod.from(vec3.from(-5, 5, 0), vec3.from(1, 0, 0));
-    const box = aabb_mod.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    const ray = ray_mod.from(vec3.init(-5, 5, 0), vec3.init(1, 0, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -273,8 +273,8 @@ test "rayAABB - miss" {
 
 test "rayAABB - ray origin inside box" {
     // given
-    const ray = ray_mod.from(vec3.from(0, 0, 0), vec3.from(1, 0, 0));
-    const box = aabb_mod.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    const ray = ray_mod.from(vec3.init(0, 0, 0), vec3.init(1, 0, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -285,9 +285,9 @@ test "rayAABB - ray origin inside box" {
 
 test "rayAABB - diagonal hit" {
     // given
-    const dir = vec3.normalize(vec3.from(1, 1, 1));
-    const ray = ray_mod.fromRaw(vec3.from(-5, -5, -5), dir);
-    const box = aabb_mod.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    const dir = vec3.normalize(vec3.init(1, 1, 1));
+    const ray = ray_mod.fromRaw(vec3.init(-5, -5, -5), dir);
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -298,8 +298,8 @@ test "rayAABB - diagonal hit" {
 
 test "rayAABB - ray pointing away" {
     // given
-    const ray = ray_mod.from(vec3.from(-5, 0, 0), vec3.from(-1, 0, 0));
-    const box = aabb_mod.from(vec3.from(-1, -1, -1), vec3.from(1, 1, 1));
+    const ray = ray_mod.from(vec3.init(-5, 0, 0), vec3.init(-1, 0, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);

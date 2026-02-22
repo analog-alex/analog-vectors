@@ -26,40 +26,40 @@ pub inline fn vec4ToVec3(v: Vec4) Vec3 {
 
 test "vec3ToPoint - sets w=1" {
     // given
-    const v = vec3.from(3, 4, 5);
+    const v = vec3.init(3, 4, 5);
 
     // when
     const result = vec3ToPoint(v);
 
     // then
-    try std.testing.expect(vec4.equal(result, vec4.from(3, 4, 5, 1)));
+    try std.testing.expect(vec4.equal(result, vec4.init(3, 4, 5, 1)));
 }
 
 test "vec3ToDir - sets w=0" {
     // given
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
 
     // when
     const result = vec3ToDir(v);
 
     // then
-    try std.testing.expect(vec4.equal(result, vec4.from(1, 0, 0, 0)));
+    try std.testing.expect(vec4.equal(result, vec4.init(1, 0, 0, 0)));
 }
 
 test "vec4ToVec3 - drops w component" {
     // given
-    const v = vec4.from(3, 4, 5, 1);
+    const v = vec4.init(3, 4, 5, 1);
 
     // when
     const result = vec4ToVec3(v);
 
     // then
-    try std.testing.expect(vec3.equal(result, vec3.from(3, 4, 5)));
+    try std.testing.expect(vec3.equal(result, vec3.init(3, 4, 5)));
 }
 
 test "vec3ToPoint roundtrip - point survives conversion" {
     // given
-    const original = vec3.from(7, -2, 13);
+    const original = vec3.init(7, -2, 13);
 
     // when
     const v4 = vec3ToPoint(original);
@@ -71,7 +71,7 @@ test "vec3ToPoint roundtrip - point survives conversion" {
 
 test "vec3ToDir roundtrip - direction survives conversion" {
     // given
-    const original = vec3.from(0.577, 0.577, 0.577);
+    const original = vec3.init(0.577, 0.577, 0.577);
 
     // when
     const v4 = vec3ToDir(original);
@@ -89,7 +89,7 @@ test "vec3ToPoint - zero point" {
     const result = vec3ToPoint(v);
 
     // then
-    try std.testing.expect(vec4.equal(result, vec4.from(0, 0, 0, 1)));
+    try std.testing.expect(vec4.equal(result, vec4.init(0, 0, 0, 1)));
 }
 
 test "vec3ToDir - zero direction" {

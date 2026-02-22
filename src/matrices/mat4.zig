@@ -436,45 +436,45 @@ test "inverse - calculates inverse matrix" {
 
 test "translation creates translation matrix" {
     const m = translation(10, 20, 30);
-    const v = vec3.from(0, 0, 0);
+    const v = vec3.init(0, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.equal(result, vec3.from(10, 20, 30)));
+    try std.testing.expect(vec3.equal(result, vec3.init(10, 20, 30)));
 }
 
 test "scaling creates scaling matrix" {
     const m = scaling(2, 3, 4);
-    const v = vec3.from(5, 6, 7);
+    const v = vec3.init(5, 6, 7);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.equal(result, vec3.from(10, 18, 28)));
+    try std.testing.expect(vec3.equal(result, vec3.init(10, 18, 28)));
 }
 
 test "rotationX rotates around x-axis" {
     const m = rotationX(std.math.pi / 2.0);
-    const v = vec3.from(0, 1, 0);
+    const v = vec3.init(0, 1, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, 1), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, 1), 0.0001));
 }
 
 test "rotationY rotates around y-axis" {
     const m = rotationY(std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, -1), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, -1), 0.0001));
 }
 
 test "rotationZ rotates around z-axis" {
     const m = rotationZ(std.math.pi / 2.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 1, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 1, 0), 0.0001));
 }
 
 test "rotationAxis rotates around arbitrary axis" {
-    const axis = vec3.normalize(vec3.from(1, 1, 1));
+    const axis = vec3.normalize(vec3.init(1, 1, 1));
     const m = rotationAxis(axis, std.math.pi * 2.0 / 3.0);
-    const v = vec3.from(1, 0, 0);
+    const v = vec3.init(1, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 1, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 1, 0), 0.0001));
 }
 
 test "perspective creates perspective projection matrix" {
@@ -484,21 +484,21 @@ test "perspective creates perspective projection matrix" {
 
 test "orthographic creates orthographic projection matrix" {
     const m = orthographic(-10, 10, -10, 10, 0.1, 100);
-    const v = vec4.from(0, 0, 0, 1);
+    const v = vec4.init(0, 0, 0, 1);
     const result = transformVec4(m, v);
     try std.testing.expect(@abs(result[0]) < 0.0001);
     try std.testing.expect(@abs(result[1]) < 0.0001);
 }
 
 test "lookAt creates view matrix" {
-    const eye = vec3.from(0, 0, 5);
-    const target = vec3.from(0, 0, 0);
-    const up = vec3.from(0, 1, 0);
+    const eye = vec3.init(0, 0, 5);
+    const target = vec3.init(0, 0, 0);
+    const up = vec3.init(0, 1, 0);
     const m = lookAt(eye, target, up);
 
-    const v = vec3.from(0, 0, 0);
+    const v = vec3.init(0, 0, 0);
     const result = transformVec3(m, v);
-    try std.testing.expect(vec3.approxEqual(result, vec3.from(0, 0, -5), 0.0001));
+    try std.testing.expect(vec3.approxEqual(result, vec3.init(0, 0, -5), 0.0001));
 }
 
 test "combined transformations - translate then scale" {
@@ -506,7 +506,7 @@ test "combined transformations - translate then scale" {
     const s = scaling(2, 2, 2);
     const combined = multiply(s, t);
 
-    const v = vec3.from(0, 0, 0);
+    const v = vec3.init(0, 0, 0);
     const result = transformVec3(combined, v);
-    try std.testing.expect(vec3.equal(result, vec3.from(20, 0, 0)));
+    try std.testing.expect(vec3.equal(result, vec3.init(20, 0, 0)));
 }

@@ -109,11 +109,11 @@ fn computeAABBNormal(box: AABB, point: Vec4) Vec4 {
     const dz = @abs(@abs(d_vec[2]) - he[2]);
 
     if (dx < epsilon and dx <= dy and dx <= dz) {
-        return if (d_vec[0] > 0) vec4.from(1, 0, 0, 0) else vec4.from(-1, 0, 0, 0);
+        return if (d_vec[0] > 0) vec4.init(1, 0, 0, 0) else vec4.init(-1, 0, 0, 0);
     } else if (dy < epsilon and dy <= dz) {
-        return if (d_vec[1] > 0) vec4.from(0, 1, 0, 0) else vec4.from(0, -1, 0, 0);
+        return if (d_vec[1] > 0) vec4.init(0, 1, 0, 0) else vec4.init(0, -1, 0, 0);
     } else {
-        return if (d_vec[2] > 0) vec4.from(0, 0, 1, 0) else vec4.from(0, 0, -1, 0);
+        return if (d_vec[2] > 0) vec4.init(0, 0, 1, 0) else vec4.init(0, 0, -1, 0);
     }
 }
 
@@ -136,8 +136,8 @@ pub fn sphereSphere(a: Sphere, b: Sphere) bool {
 
 test "raySphere - hit from outside" {
     // given
-    const ray = ray_mod.from(vec4.from(-10, 0, 0, 1), vec4.from(1, 0, 0, 0));
-    const s = sphere_mod.from(vec4.from(0, 0, 0, 1), 3);
+    const ray = ray_mod.from(vec4.init(-10, 0, 0, 1), vec4.init(1, 0, 0, 0));
+    const s = sphere_mod.from(vec4.init(0, 0, 0, 1), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -145,14 +145,14 @@ test "raySphere - hit from outside" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 7.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.from(-3, 0, 0, 1), 0.01));
-    try std.testing.expect(vec4.approxEqual(hit.?.normal, vec4.from(-1, 0, 0, 0), 0.01));
+    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.init(-3, 0, 0, 1), 0.01));
+    try std.testing.expect(vec4.approxEqual(hit.?.normal, vec4.init(-1, 0, 0, 0), 0.01));
 }
 
 test "raySphere - miss" {
     // given
-    const ray = ray_mod.from(vec4.from(-10, 0, 0, 1), vec4.from(0, 1, 0, 0));
-    const s = sphere_mod.from(vec4.from(0, 0, 0, 1), 3);
+    const ray = ray_mod.from(vec4.init(-10, 0, 0, 1), vec4.init(0, 1, 0, 0));
+    const s = sphere_mod.from(vec4.init(0, 0, 0, 1), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -163,8 +163,8 @@ test "raySphere - miss" {
 
 test "raySphere - ray origin inside sphere" {
     // given
-    const ray = ray_mod.from(vec4.from(0, 0, 0, 1), vec4.from(1, 0, 0, 0));
-    const s = sphere_mod.from(vec4.from(0, 0, 0, 1), 5);
+    const ray = ray_mod.from(vec4.init(0, 0, 0, 1), vec4.init(1, 0, 0, 0));
+    const s = sphere_mod.from(vec4.init(0, 0, 0, 1), 5);
 
     // when
     const hit = raySphere(ray, s);
@@ -176,8 +176,8 @@ test "raySphere - ray origin inside sphere" {
 
 test "raySphere - ray pointing away" {
     // given
-    const ray = ray_mod.from(vec4.from(-10, 0, 0, 1), vec4.from(-1, 0, 0, 0));
-    const s = sphere_mod.from(vec4.from(0, 0, 0, 1), 3);
+    const ray = ray_mod.from(vec4.init(-10, 0, 0, 1), vec4.init(-1, 0, 0, 0));
+    const s = sphere_mod.from(vec4.init(0, 0, 0, 1), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -188,8 +188,8 @@ test "raySphere - ray pointing away" {
 
 test "raySphere - tangent hit" {
     // given
-    const ray = ray_mod.from(vec4.from(-10, 3, 0, 1), vec4.from(1, 0, 0, 0));
-    const s = sphere_mod.from(vec4.from(0, 0, 0, 1), 3);
+    const ray = ray_mod.from(vec4.init(-10, 3, 0, 1), vec4.init(1, 0, 0, 0));
+    const s = sphere_mod.from(vec4.init(0, 0, 0, 1), 3);
 
     // when
     const hit = raySphere(ray, s);
@@ -204,8 +204,8 @@ test "raySphere - tangent hit" {
 
 test "rayPlane - hits plane from front" {
     // given
-    const ray = ray_mod.from(vec4.from(0, 5, 0, 1), vec4.from(0, -1, 0, 0));
-    const p = plane_mod.fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const ray = ray_mod.from(vec4.init(0, 5, 0, 1), vec4.init(0, -1, 0, 0));
+    const p = plane_mod.fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -213,13 +213,13 @@ test "rayPlane - hits plane from front" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 5.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.from(0, 0, 0, 1), 0.01));
+    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.init(0, 0, 0, 1), 0.01));
 }
 
 test "rayPlane - hits plane from back" {
     // given
-    const ray = ray_mod.from(vec4.from(0, -5, 0, 1), vec4.from(0, 1, 0, 0));
-    const p = plane_mod.fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const ray = ray_mod.from(vec4.init(0, -5, 0, 1), vec4.init(0, 1, 0, 0));
+    const p = plane_mod.fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -231,8 +231,8 @@ test "rayPlane - hits plane from back" {
 
 test "rayPlane - parallel to plane" {
     // given
-    const ray = ray_mod.from(vec4.from(0, 5, 0, 1), vec4.from(1, 0, 0, 0));
-    const p = plane_mod.fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const ray = ray_mod.from(vec4.init(0, 5, 0, 1), vec4.init(1, 0, 0, 0));
+    const p = plane_mod.fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -243,8 +243,8 @@ test "rayPlane - parallel to plane" {
 
 test "rayPlane - plane behind ray" {
     // given
-    const ray = ray_mod.from(vec4.from(0, 5, 0, 1), vec4.from(0, 1, 0, 0));
-    const p = plane_mod.fromPointNormal(vec4.from(0, 0, 0, 1), vec4.from(0, 1, 0, 0));
+    const ray = ray_mod.from(vec4.init(0, 5, 0, 1), vec4.init(0, 1, 0, 0));
+    const p = plane_mod.fromPointNormal(vec4.init(0, 0, 0, 1), vec4.init(0, 1, 0, 0));
 
     // when
     const hit = rayPlane(ray, p);
@@ -258,8 +258,8 @@ test "rayPlane - plane behind ray" {
 
 test "rayAABB - hit from outside" {
     // given
-    const ray = ray_mod.from(vec4.from(-5, 0, 0, 1), vec4.from(1, 0, 0, 0));
-    const box = aabb_mod.from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const ray = ray_mod.from(vec4.init(-5, 0, 0, 1), vec4.init(1, 0, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -267,13 +267,13 @@ test "rayAABB - hit from outside" {
     // then
     try std.testing.expect(hit != null);
     try std.testing.expectApproxEqAbs(@as(f32, 4.0), hit.?.t, 0.0001);
-    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.from(-1, 0, 0, 1), 0.01));
+    try std.testing.expect(vec4.approxEqual(hit.?.point, vec4.init(-1, 0, 0, 1), 0.01));
 }
 
 test "rayAABB - miss" {
     // given
-    const ray = ray_mod.from(vec4.from(-5, 5, 0, 1), vec4.from(1, 0, 0, 0));
-    const box = aabb_mod.from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const ray = ray_mod.from(vec4.init(-5, 5, 0, 1), vec4.init(1, 0, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -284,8 +284,8 @@ test "rayAABB - miss" {
 
 test "rayAABB - ray origin inside box" {
     // given
-    const ray = ray_mod.from(vec4.from(0, 0, 0, 1), vec4.from(1, 0, 0, 0));
-    const box = aabb_mod.from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const ray = ray_mod.from(vec4.init(0, 0, 0, 1), vec4.init(1, 0, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -296,8 +296,8 @@ test "rayAABB - ray origin inside box" {
 
 test "rayAABB - ray pointing away" {
     // given
-    const ray = ray_mod.from(vec4.from(-5, 0, 0, 1), vec4.from(-1, 0, 0, 0));
-    const box = aabb_mod.from(vec4.from(-1, -1, -1, 1), vec4.from(1, 1, 1, 1));
+    const ray = ray_mod.from(vec4.init(-5, 0, 0, 1), vec4.init(-1, 0, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
 
     // when
     const hit = rayAABB(ray, box);
@@ -311,8 +311,8 @@ test "rayAABB - ray pointing away" {
 
 test "aabbAABB - true for overlapping" {
     // given
-    const a = aabb_mod.from(vec4.from(0, 0, 0, 1), vec4.from(2, 2, 2, 1));
-    const b = aabb_mod.from(vec4.from(1, 1, 1, 1), vec4.from(3, 3, 3, 1));
+    const a = aabb_mod.from(vec4.init(0, 0, 0, 1), vec4.init(2, 2, 2, 1));
+    const b = aabb_mod.from(vec4.init(1, 1, 1, 1), vec4.init(3, 3, 3, 1));
 
     // when / then
     try std.testing.expect(aabbAABB(a, b));
@@ -320,8 +320,8 @@ test "aabbAABB - true for overlapping" {
 
 test "aabbAABB - false for separated" {
     // given
-    const a = aabb_mod.from(vec4.from(0, 0, 0, 1), vec4.from(1, 1, 1, 1));
-    const b = aabb_mod.from(vec4.from(2, 2, 2, 1), vec4.from(3, 3, 3, 1));
+    const a = aabb_mod.from(vec4.init(0, 0, 0, 1), vec4.init(1, 1, 1, 1));
+    const b = aabb_mod.from(vec4.init(2, 2, 2, 1), vec4.init(3, 3, 3, 1));
 
     // when / then
     try std.testing.expect(!aabbAABB(a, b));
@@ -332,8 +332,8 @@ test "aabbAABB - false for separated" {
 
 test "sphereSphere - true for overlapping" {
     // given
-    const a = sphere_mod.from(vec4.from(0, 0, 0, 1), 3);
-    const b = sphere_mod.from(vec4.from(4, 0, 0, 1), 2);
+    const a = sphere_mod.from(vec4.init(0, 0, 0, 1), 3);
+    const b = sphere_mod.from(vec4.init(4, 0, 0, 1), 2);
 
     // when / then
     try std.testing.expect(sphereSphere(a, b));
@@ -341,8 +341,8 @@ test "sphereSphere - true for overlapping" {
 
 test "sphereSphere - false for separated" {
     // given
-    const a = sphere_mod.from(vec4.from(0, 0, 0, 1), 1);
-    const b = sphere_mod.from(vec4.from(5, 0, 0, 1), 1);
+    const a = sphere_mod.from(vec4.init(0, 0, 0, 1), 1);
+    const b = sphere_mod.from(vec4.init(5, 0, 0, 1), 1);
 
     // when / then
     try std.testing.expect(!sphereSphere(a, b));
