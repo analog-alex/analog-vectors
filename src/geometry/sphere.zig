@@ -25,7 +25,7 @@ pub inline fn overlapsSphere(a: Sphere, b: Sphere) bool {
 pub fn closestPointToPoint(s: Sphere, p: Vec3) Vec3 {
     const dir = vec3.sub(p, s.center);
     const dist = vec3.length(dir);
-    if (dist == 0) return vec3.sum(s.center, vec3.mul(vec3.from(1, 0, 0), s.radius));
+    if (dist == 0) return vec3.sum(s.center, vec3.mul(vec3.init(1, 0, 0), s.radius));
     return vec3.sum(s.center, vec3.mul(vec3.normalize(dir), s.radius));
 }
 
@@ -47,35 +47,35 @@ pub fn surfaceArea(s: Sphere) f32 {
 
 test "from - creates sphere" {
     // given / when
-    const s = from(vec3.from(1, 2, 3), 5);
+    const s = from(vec3.init(1, 2, 3), 5);
 
     // then
-    try std.testing.expect(vec3.equal(s.center, vec3.from(1, 2, 3)));
+    try std.testing.expect(vec3.equal(s.center, vec3.init(1, 2, 3)));
     try std.testing.expect(s.radius == 5);
 }
 
 test "containsPoint - true when inside" {
     // given
-    const s = from(vec3.from(0, 0, 0), 5);
+    const s = from(vec3.init(0, 0, 0), 5);
 
     // when / then
-    try std.testing.expect(containsPoint(s, vec3.from(0, 0, 0)));
-    try std.testing.expect(containsPoint(s, vec3.from(3, 4, 0)));
-    try std.testing.expect(containsPoint(s, vec3.from(5, 0, 0))); // on boundary
+    try std.testing.expect(containsPoint(s, vec3.init(0, 0, 0)));
+    try std.testing.expect(containsPoint(s, vec3.init(3, 4, 0)));
+    try std.testing.expect(containsPoint(s, vec3.init(5, 0, 0))); // on boundary
 }
 
 test "containsPoint - false when outside" {
     // given
-    const s = from(vec3.from(0, 0, 0), 5);
+    const s = from(vec3.init(0, 0, 0), 5);
 
     // when / then
-    try std.testing.expect(!containsPoint(s, vec3.from(6, 0, 0)));
+    try std.testing.expect(!containsPoint(s, vec3.init(6, 0, 0)));
 }
 
 test "overlapsSphere - true for overlapping spheres" {
     // given
-    const a = from(vec3.from(0, 0, 0), 3);
-    const b = from(vec3.from(4, 0, 0), 2);
+    const a = from(vec3.init(0, 0, 0), 3);
+    const b = from(vec3.init(4, 0, 0), 2);
 
     // when / then
     try std.testing.expect(overlapsSphere(a, b));
@@ -83,8 +83,8 @@ test "overlapsSphere - true for overlapping spheres" {
 
 test "overlapsSphere - false for separated spheres" {
     // given
-    const a = from(vec3.from(0, 0, 0), 1);
-    const b = from(vec3.from(5, 0, 0), 1);
+    const a = from(vec3.init(0, 0, 0), 1);
+    const b = from(vec3.init(5, 0, 0), 1);
 
     // when / then
     try std.testing.expect(!overlapsSphere(a, b));
@@ -92,8 +92,8 @@ test "overlapsSphere - false for separated spheres" {
 
 test "overlapsSphere - true for touching spheres" {
     // given
-    const a = from(vec3.from(0, 0, 0), 2);
-    const b = from(vec3.from(5, 0, 0), 3);
+    const a = from(vec3.init(0, 0, 0), 2);
+    const b = from(vec3.init(5, 0, 0), 3);
 
     // when / then
     try std.testing.expect(overlapsSphere(a, b));
@@ -101,22 +101,22 @@ test "overlapsSphere - true for touching spheres" {
 
 test "closestPointToPoint - returns surface point" {
     // given
-    const s = from(vec3.from(0, 0, 0), 5);
-    const p = vec3.from(10, 0, 0);
+    const s = from(vec3.init(0, 0, 0), 5);
+    const p = vec3.init(10, 0, 0);
 
     // when
     const closest = closestPointToPoint(s, p);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(5, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(5, 0, 0), 0.0001));
 }
 
 test "distanceToPoint - zero when inside" {
     // given
-    const s = from(vec3.from(0, 0, 0), 5);
+    const s = from(vec3.init(0, 0, 0), 5);
 
     // when
-    const dist = distanceToPoint(s, vec3.from(2, 0, 0));
+    const dist = distanceToPoint(s, vec3.init(2, 0, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 0.0), dist, 0.0001);
@@ -124,10 +124,10 @@ test "distanceToPoint - zero when inside" {
 
 test "distanceToPoint - positive when outside" {
     // given
-    const s = from(vec3.from(0, 0, 0), 5);
+    const s = from(vec3.init(0, 0, 0), 5);
 
     // when
-    const dist = distanceToPoint(s, vec3.from(8, 0, 0));
+    const dist = distanceToPoint(s, vec3.init(8, 0, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 3.0), dist, 0.0001);

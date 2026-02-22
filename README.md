@@ -75,8 +75,8 @@ const vec3 = vectors.vec3;
 
 pub fn main() void {
     // 2D Vector Operations
-    const a = vec2.from(3, 4);
-    const b = vec2.from(1, 2);
+    const a = vec2.init(3, 4);
+    const b = vec2.init(1, 2);
 
     const sum = vec2.sum(a, b);              // [4, 6]
     const length = vec2.length(a);           // 5.0
@@ -87,14 +87,14 @@ pub fn main() void {
     const rotated = vec2.rotate(a, std.math.pi / 2); // Rotate 90 degrees
 
     // 3D Vector Operations
-    const v1 = vec3.from(1, 0, 0);
-    const v2 = vec3.from(0, 1, 0);
+    const v1 = vec3.init(1, 0, 0);
+    const v2 = vec3.init(0, 1, 0);
 
     const cross = vec3.cross(v1, v2);       // [0, 0, 1] (unit Z)
     const angle = vec3.angleBetween(v1, v2); // π/2 radians
 
     // Rotation around arbitrary axis
-    const axis = vec3.normalize(vec3.from(1, 1, 0));
+    const axis = vec3.normalize(vec3.init(1, 1, 0));
     const rotated3d = vec3.rotate(v1, axis, std.math.pi / 4);
 }
 ```
@@ -105,7 +105,10 @@ pub fn main() void {
 
 #### Construction & Accessors
 ```zig
-pub fn from(x: f32, y: f32) Vec2
+pub fn init(x: f32, y: f32) Vec2
+pub fn fromArray(values: [2]f32) Vec2
+pub fn fromVec3(v: [3]f32) Vec2
+pub fn fromVec4(v: @Vector(4, f32)) Vec2
 pub fn X(v: Vec2) f32
 pub fn Y(v: Vec2) f32
 ```
@@ -165,7 +168,10 @@ Vec3 provides the same operations as Vec2, with these differences:
 
 #### Construction & Accessors
 ```zig
-pub fn from(x: f32, y: f32, z: f32) Vec3
+pub fn init(x: f32, y: f32, z: f32) Vec3
+pub fn fromArray(values: [3]f32) Vec3
+pub fn fromVec2(v: [2]f32, z: f32) Vec3
+pub fn fromVec4(v: @Vector(4, f32)) Vec3
 pub fn X(v: Vec3) f32
 pub fn Y(v: Vec3) f32
 pub fn Z(v: Vec3) f32

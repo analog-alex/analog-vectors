@@ -43,7 +43,7 @@ pub fn closestPointToPoint(c: Capsule, p: Vec3) Vec3 {
     const axis_point = closestPointOnAxis(c, p);
     const dir = vec3.sub(p, axis_point);
     const dist = vec3.length(dir);
-    if (dist == 0) return vec3.sum(axis_point, vec3.mul(vec3.from(1, 0, 0), c.radius));
+    if (dist == 0) return vec3.sum(axis_point, vec3.mul(vec3.init(1, 0, 0), c.radius));
     return vec3.sum(axis_point, vec3.mul(vec3.normalize(dir), c.radius));
 }
 
@@ -58,17 +58,17 @@ pub fn distanceToPoint(c: Capsule, p: Vec3) f32 {
 
 test "from - creates capsule" {
     // given / when
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 2);
 
     // then
-    try std.testing.expect(vec3.equal(c.start, vec3.from(0, 0, 0)));
-    try std.testing.expect(vec3.equal(c.end, vec3.from(0, 10, 0)));
+    try std.testing.expect(vec3.equal(c.start, vec3.init(0, 0, 0)));
+    try std.testing.expect(vec3.equal(c.end, vec3.init(0, 10, 0)));
     try std.testing.expect(c.radius == 2);
 }
 
 test "height - returns distance between endpoints" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 2);
 
     // when
     const h = height(c);
@@ -79,38 +79,38 @@ test "height - returns distance between endpoints" {
 
 test "center - returns midpoint of axis" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 2);
 
     // when
     const mid = center(c);
 
     // then
-    try std.testing.expect(vec3.approxEqual(mid, vec3.from(0, 5, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(mid, vec3.init(0, 5, 0), 0.0001));
 }
 
 test "containsPoint - true when inside" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 3);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 3);
 
     // when / then
-    try std.testing.expect(containsPoint(c, vec3.from(0, 5, 0))); // on axis
-    try std.testing.expect(containsPoint(c, vec3.from(2, 5, 0))); // inside radius
+    try std.testing.expect(containsPoint(c, vec3.init(0, 5, 0))); // on axis
+    try std.testing.expect(containsPoint(c, vec3.init(2, 5, 0))); // inside radius
 }
 
 test "containsPoint - false when outside" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 2);
 
     // when / then
-    try std.testing.expect(!containsPoint(c, vec3.from(5, 5, 0)));
+    try std.testing.expect(!containsPoint(c, vec3.init(5, 5, 0)));
 }
 
 test "distanceToPoint - zero when inside" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 3);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 3);
 
     // when
-    const dist = distanceToPoint(c, vec3.from(1, 5, 0));
+    const dist = distanceToPoint(c, vec3.init(1, 5, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 0.0), dist, 0.0001);
@@ -118,10 +118,10 @@ test "distanceToPoint - zero when inside" {
 
 test "distanceToPoint - positive when outside" {
     // given
-    const c = from(vec3.from(0, 0, 0), vec3.from(0, 10, 0), 2);
+    const c = from(vec3.init(0, 0, 0), vec3.init(0, 10, 0), 2);
 
     // when
-    const dist = distanceToPoint(c, vec3.from(5, 5, 0));
+    const dist = distanceToPoint(c, vec3.init(5, 5, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 3.0), dist, 0.0001);

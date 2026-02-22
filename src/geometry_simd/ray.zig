@@ -40,44 +40,44 @@ pub inline fn pointAt(r: Ray, t: f32) Vec4 {
 
 test "from - normalizes direction and sets w components" {
     // given
-    const origin = vec4.from(1, 2, 3, 0);
-    const dir = vec4.from(2, 0, 0, 0);
+    const origin = vec4.init(1, 2, 3, 0);
+    const dir = vec4.init(2, 0, 0, 0);
 
     // when
     const r = from(origin, dir);
 
     // then
-    try std.testing.expect(vec4.approxEqual(r.direction, vec4.from(1, 0, 0, 0), 0.0001));
+    try std.testing.expect(vec4.approxEqual(r.direction, vec4.init(1, 0, 0, 0), 0.0001));
     try std.testing.expect(r.origin[3] == 1); // w=1 for point
     try std.testing.expect(r.direction[3] == 0); // w=0 for direction
 }
 
 test "pointAt - returns point along ray" {
     // given
-    const r = from(vec4.from(1, 2, 3, 1), vec4.from(1, 0, 0, 0));
+    const r = from(vec4.init(1, 2, 3, 1), vec4.init(1, 0, 0, 0));
 
     // when
     const p = pointAt(r, 5);
 
     // then
-    try std.testing.expect(vec4.approxEqual(p, vec4.from(6, 2, 3, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(p, vec4.init(6, 2, 3, 1), 0.0001));
 }
 
 test "pointAt - t=0 returns origin" {
     // given
-    const r = from(vec4.from(3, 4, 5, 1), vec4.from(0, 1, 0, 0));
+    const r = from(vec4.init(3, 4, 5, 1), vec4.init(0, 1, 0, 0));
 
     // when
     const p = pointAt(r, 0);
 
     // then
-    try std.testing.expect(vec4.approxEqual(p, vec4.from(3, 4, 5, 1), 0.0001));
+    try std.testing.expect(vec4.approxEqual(p, vec4.init(3, 4, 5, 1), 0.0001));
 }
 
 test "from - diagonal direction is normalized" {
     // given
-    const origin = vec4.from(0, 0, 0, 1);
-    const dir = vec4.from(1, 1, 1, 0);
+    const origin = vec4.init(0, 0, 0, 1);
+    const dir = vec4.init(1, 1, 1, 0);
 
     // when
     const r = from(origin, dir);

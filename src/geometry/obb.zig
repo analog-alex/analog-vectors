@@ -20,9 +20,9 @@ pub fn fromAxisAligned(c: Vec3, half_ext: Vec3) OBB {
     return .{
         .center = c,
         .axes = .{
-            vec3.from(1, 0, 0),
-            vec3.from(0, 1, 0),
-            vec3.from(0, 0, 1),
+            vec3.init(1, 0, 0),
+            vec3.init(0, 1, 0),
+            vec3.init(0, 0, 1),
         },
         .half_extents = half_ext,
     };
@@ -143,46 +143,46 @@ pub fn overlaps(a: OBB, b: OBB) bool {
 
 test "fromAxisAligned - creates axis-aligned OBB" {
     // given / when
-    const box = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(2, 3, 4));
+    const box = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(2, 3, 4));
 
     // then
-    try std.testing.expect(vec3.equal(box.center, vec3.from(0, 0, 0)));
-    try std.testing.expect(vec3.equal(box.half_extents, vec3.from(2, 3, 4)));
+    try std.testing.expect(vec3.equal(box.center, vec3.init(0, 0, 0)));
+    try std.testing.expect(vec3.equal(box.half_extents, vec3.init(2, 3, 4)));
 }
 
 test "containsPoint - true when inside" {
     // given
-    const box = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(5, 5, 5));
+    const box = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(5, 5, 5));
 
     // when / then
-    try std.testing.expect(containsPoint(box, vec3.from(0, 0, 0)));
-    try std.testing.expect(containsPoint(box, vec3.from(4, 4, 4)));
+    try std.testing.expect(containsPoint(box, vec3.init(0, 0, 0)));
+    try std.testing.expect(containsPoint(box, vec3.init(4, 4, 4)));
 }
 
 test "containsPoint - false when outside" {
     // given
-    const box = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(5, 5, 5));
+    const box = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(5, 5, 5));
 
     // when / then
-    try std.testing.expect(!containsPoint(box, vec3.from(6, 0, 0)));
+    try std.testing.expect(!containsPoint(box, vec3.init(6, 0, 0)));
 }
 
 test "closestPointToPoint - clamps to surface" {
     // given
-    const box = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(5, 5, 5));
-    const p = vec3.from(10, 3, 0);
+    const box = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(5, 5, 5));
+    const p = vec3.init(10, 3, 0);
 
     // when
     const closest = closestPointToPoint(box, p);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(5, 3, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(5, 3, 0), 0.0001));
 }
 
 test "overlaps - true for overlapping axis-aligned OBBs" {
     // given
-    const a = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(2, 2, 2));
-    const b = fromAxisAligned(vec3.from(3, 0, 0), vec3.from(2, 2, 2));
+    const a = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(2, 2, 2));
+    const b = fromAxisAligned(vec3.init(3, 0, 0), vec3.init(2, 2, 2));
 
     // when / then
     try std.testing.expect(overlaps(a, b));
@@ -190,8 +190,8 @@ test "overlaps - true for overlapping axis-aligned OBBs" {
 
 test "overlaps - false for separated OBBs" {
     // given
-    const a = fromAxisAligned(vec3.from(0, 0, 0), vec3.from(1, 1, 1));
-    const b = fromAxisAligned(vec3.from(5, 0, 0), vec3.from(1, 1, 1));
+    const a = fromAxisAligned(vec3.init(0, 0, 0), vec3.init(1, 1, 1));
+    const b = fromAxisAligned(vec3.init(5, 0, 0), vec3.init(1, 1, 1));
 
     // when / then
     try std.testing.expect(!overlaps(a, b));

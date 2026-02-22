@@ -78,9 +78,9 @@ pub fn fromViewProjectionMatrix(m: [16]f32) Frustum {
 
 fn normalizePlane(a: f32, b: f32, c: f32, d: f32) Plane {
     const len = @sqrt(a * a + b * b + c * c);
-    if (len == 0) return .{ .normal = vec3.from(0, 1, 0), .d = 0 };
+    if (len == 0) return .{ .normal = vec3.init(0, 1, 0), .d = 0 };
     const inv = 1.0 / len;
-    return .{ .normal = vec3.from(a * inv, b * inv, c * inv), .d = d * inv };
+    return .{ .normal = vec3.init(a * inv, b * inv, c * inv), .d = d * inv };
 }
 
 /// Test if a point is inside the frustum (on the positive side of all planes).
@@ -110,61 +110,61 @@ pub inline fn getPlane(f: Frustum, which: FrustumPlane) Plane {
 test "containsPoint - point inside frustum" {
     // given - create a simple box frustum centered at origin, half-extents of 10
     const f = from(.{
-        plane_mod.fromPointNormal(vec3.from(0, 0, -10), vec3.from(0, 0, 1)), // near
-        plane_mod.fromPointNormal(vec3.from(0, 0, 10), vec3.from(0, 0, -1)), // far
-        plane_mod.fromPointNormal(vec3.from(-10, 0, 0), vec3.from(1, 0, 0)), // left
-        plane_mod.fromPointNormal(vec3.from(10, 0, 0), vec3.from(-1, 0, 0)), // right
-        plane_mod.fromPointNormal(vec3.from(0, 10, 0), vec3.from(0, -1, 0)), // top
-        plane_mod.fromPointNormal(vec3.from(0, -10, 0), vec3.from(0, 1, 0)), // bottom
+        plane_mod.fromPointNormal(vec3.init(0, 0, -10), vec3.init(0, 0, 1)), // near
+        plane_mod.fromPointNormal(vec3.init(0, 0, 10), vec3.init(0, 0, -1)), // far
+        plane_mod.fromPointNormal(vec3.init(-10, 0, 0), vec3.init(1, 0, 0)), // left
+        plane_mod.fromPointNormal(vec3.init(10, 0, 0), vec3.init(-1, 0, 0)), // right
+        plane_mod.fromPointNormal(vec3.init(0, 10, 0), vec3.init(0, -1, 0)), // top
+        plane_mod.fromPointNormal(vec3.init(0, -10, 0), vec3.init(0, 1, 0)), // bottom
     });
 
     // when / then
-    try std.testing.expect(containsPoint(f, vec3.from(0, 0, 0)));
-    try std.testing.expect(containsPoint(f, vec3.from(5, 5, 5)));
+    try std.testing.expect(containsPoint(f, vec3.init(0, 0, 0)));
+    try std.testing.expect(containsPoint(f, vec3.init(5, 5, 5)));
 }
 
 test "containsPoint - point outside frustum" {
     // given
     const f = from(.{
-        plane_mod.fromPointNormal(vec3.from(0, 0, -10), vec3.from(0, 0, 1)),
-        plane_mod.fromPointNormal(vec3.from(0, 0, 10), vec3.from(0, 0, -1)),
-        plane_mod.fromPointNormal(vec3.from(-10, 0, 0), vec3.from(1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(10, 0, 0), vec3.from(-1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, 10, 0), vec3.from(0, -1, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, -10, 0), vec3.from(0, 1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, -10), vec3.init(0, 0, 1)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, 10), vec3.init(0, 0, -1)),
+        plane_mod.fromPointNormal(vec3.init(-10, 0, 0), vec3.init(1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(10, 0, 0), vec3.init(-1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 10, 0), vec3.init(0, -1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, -10, 0), vec3.init(0, 1, 0)),
     });
 
     // when / then
-    try std.testing.expect(!containsPoint(f, vec3.from(15, 0, 0)));
-    try std.testing.expect(!containsPoint(f, vec3.from(0, 0, 15)));
+    try std.testing.expect(!containsPoint(f, vec3.init(15, 0, 0)));
+    try std.testing.expect(!containsPoint(f, vec3.init(0, 0, 15)));
 }
 
 test "containsSphere - sphere partially inside" {
     // given
     const f = from(.{
-        plane_mod.fromPointNormal(vec3.from(0, 0, -10), vec3.from(0, 0, 1)),
-        plane_mod.fromPointNormal(vec3.from(0, 0, 10), vec3.from(0, 0, -1)),
-        plane_mod.fromPointNormal(vec3.from(-10, 0, 0), vec3.from(1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(10, 0, 0), vec3.from(-1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, 10, 0), vec3.from(0, -1, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, -10, 0), vec3.from(0, 1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, -10), vec3.init(0, 0, 1)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, 10), vec3.init(0, 0, -1)),
+        plane_mod.fromPointNormal(vec3.init(-10, 0, 0), vec3.init(1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(10, 0, 0), vec3.init(-1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 10, 0), vec3.init(0, -1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, -10, 0), vec3.init(0, 1, 0)),
     });
 
     // when / then - sphere straddles the right plane
-    try std.testing.expect(containsSphere(f, vec3.from(11, 0, 0), 3));
+    try std.testing.expect(containsSphere(f, vec3.init(11, 0, 0), 3));
 }
 
 test "containsSphere - sphere fully outside" {
     // given
     const f = from(.{
-        plane_mod.fromPointNormal(vec3.from(0, 0, -10), vec3.from(0, 0, 1)),
-        plane_mod.fromPointNormal(vec3.from(0, 0, 10), vec3.from(0, 0, -1)),
-        plane_mod.fromPointNormal(vec3.from(-10, 0, 0), vec3.from(1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(10, 0, 0), vec3.from(-1, 0, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, 10, 0), vec3.from(0, -1, 0)),
-        plane_mod.fromPointNormal(vec3.from(0, -10, 0), vec3.from(0, 1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, -10), vec3.init(0, 0, 1)),
+        plane_mod.fromPointNormal(vec3.init(0, 0, 10), vec3.init(0, 0, -1)),
+        plane_mod.fromPointNormal(vec3.init(-10, 0, 0), vec3.init(1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(10, 0, 0), vec3.init(-1, 0, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, 10, 0), vec3.init(0, -1, 0)),
+        plane_mod.fromPointNormal(vec3.init(0, -10, 0), vec3.init(0, 1, 0)),
     });
 
     // when / then
-    try std.testing.expect(!containsSphere(f, vec3.from(20, 0, 0), 2));
+    try std.testing.expect(!containsSphere(f, vec3.init(20, 0, 0), 2));
 }

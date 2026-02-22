@@ -24,7 +24,7 @@ pub inline fn clamp(value: f32, min_val: f32, max_val: f32) f32 {
 
 /// Component-wise minimum of two Vec2
 pub fn minVec2(a: vec2.Vec2, b: vec2.Vec2) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         @min(vec2.X(a), vec2.X(b)),
         @min(vec2.Y(a), vec2.Y(b)),
     );
@@ -32,7 +32,7 @@ pub fn minVec2(a: vec2.Vec2, b: vec2.Vec2) vec2.Vec2 {
 
 /// Component-wise maximum of two Vec2
 pub fn maxVec2(a: vec2.Vec2, b: vec2.Vec2) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         @max(vec2.X(a), vec2.X(b)),
         @max(vec2.Y(a), vec2.Y(b)),
     );
@@ -40,7 +40,7 @@ pub fn maxVec2(a: vec2.Vec2, b: vec2.Vec2) vec2.Vec2 {
 
 /// Component-wise minimum of two Vec3
 pub fn minVec3(a: vec3.Vec3, b: vec3.Vec3) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         @min(vec3.X(a), vec3.X(b)),
         @min(vec3.Y(a), vec3.Y(b)),
         @min(vec3.Z(a), vec3.Z(b)),
@@ -49,7 +49,7 @@ pub fn minVec3(a: vec3.Vec3, b: vec3.Vec3) vec3.Vec3 {
 
 /// Component-wise maximum of two Vec3
 pub fn maxVec3(a: vec3.Vec3, b: vec3.Vec3) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         @max(vec3.X(a), vec3.X(b)),
         @max(vec3.Y(a), vec3.Y(b)),
         @max(vec3.Z(a), vec3.Z(b)),
@@ -58,7 +58,7 @@ pub fn maxVec3(a: vec3.Vec3, b: vec3.Vec3) vec3.Vec3 {
 
 /// Component-wise minimum of two Vec4
 pub fn minVec4(a: vec4.Vec4, b: vec4.Vec4) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         @min(vec4.X(a), vec4.X(b)),
         @min(vec4.Y(a), vec4.Y(b)),
         @min(vec4.Z(a), vec4.Z(b)),
@@ -68,7 +68,7 @@ pub fn minVec4(a: vec4.Vec4, b: vec4.Vec4) vec4.Vec4 {
 
 /// Component-wise maximum of two Vec4
 pub fn maxVec4(a: vec4.Vec4, b: vec4.Vec4) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         @max(vec4.X(a), vec4.X(b)),
         @max(vec4.Y(a), vec4.Y(b)),
         @max(vec4.Z(a), vec4.Z(b)),
@@ -138,8 +138,8 @@ test "clamp constrains values" {
 }
 
 test "minVec2 and maxVec2 work component-wise" {
-    const a = vec2.from(1, 5);
-    const b = vec2.from(3, 2);
+    const a = vec2.init(1, 5);
+    const b = vec2.init(3, 2);
 
     const min_v = minVec2(a, b);
     try std.testing.expectEqual(@as(f32, 1), vec2.X(min_v));
@@ -151,8 +151,8 @@ test "minVec2 and maxVec2 work component-wise" {
 }
 
 test "minVec3 and maxVec3 work component-wise" {
-    const a = vec3.from(1, 5, 2);
-    const b = vec3.from(3, 2, 7);
+    const a = vec3.init(1, 5, 2);
+    const b = vec3.init(3, 2, 7);
 
     const min_v = minVec3(a, b);
     try std.testing.expectEqual(@as(f32, 1), vec3.X(min_v));
@@ -166,8 +166,8 @@ test "minVec3 and maxVec3 work component-wise" {
 }
 
 test "minVec4 and maxVec4 work component-wise" {
-    const a = vec4.from(1, 5, 2, 8);
-    const b = vec4.from(3, 2, 7, 4);
+    const a = vec4.init(1, 5, 2, 8);
+    const b = vec4.init(3, 2, 7, 4);
 
     const min_v = minVec4(a, b);
     try std.testing.expectEqual(@as(f32, 1), vec4.X(min_v));
@@ -183,8 +183,8 @@ test "minVec4 and maxVec4 work component-wise" {
 }
 
 test "minMagnitudeVec2 and maxMagnitudeVec2 compare by length" {
-    const a = vec2.from(3, 4); // length = 5
-    const b = vec2.from(1, 1); // length ≈ 1.41
+    const a = vec2.init(3, 4); // length = 5
+    const b = vec2.init(1, 1); // length ≈ 1.41
 
     const min_v = minMagnitudeVec2(a, b);
     try std.testing.expectEqual(@as(f32, 1), vec2.X(min_v));
@@ -196,8 +196,8 @@ test "minMagnitudeVec2 and maxMagnitudeVec2 compare by length" {
 }
 
 test "minMagnitudeVec3 and maxMagnitudeVec3 compare by length" {
-    const a = vec3.from(2, 3, 6); // length = 7
-    const b = vec3.from(1, 0, 0); // length = 1
+    const a = vec3.init(2, 3, 6); // length = 7
+    const b = vec3.init(1, 0, 0); // length = 1
 
     const min_v = minMagnitudeVec3(a, b);
     try std.testing.expectEqual(@as(f32, 1), vec3.X(min_v));

@@ -67,7 +67,7 @@ pub fn catmullRom(p0: f32, p1: f32, p2: f32, p3: f32, t: f32) f32 {
 
 /// Cubic Hermite interpolation for Vec2
 pub fn hermiteVec2(p0: vec2.Vec2, p1: vec2.Vec2, m0: vec2.Vec2, m1: vec2.Vec2, t: f32) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         hermite(vec2.X(p0), vec2.X(p1), vec2.X(m0), vec2.X(m1), t),
         hermite(vec2.Y(p0), vec2.Y(p1), vec2.Y(m0), vec2.Y(m1), t),
     );
@@ -75,7 +75,7 @@ pub fn hermiteVec2(p0: vec2.Vec2, p1: vec2.Vec2, m0: vec2.Vec2, m1: vec2.Vec2, t
 
 /// Quadratic Bezier interpolation for Vec2
 pub fn bezierQuadraticVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, t: f32) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         bezierQuadratic(vec2.X(p0), vec2.X(p1), vec2.X(p2), t),
         bezierQuadratic(vec2.Y(p0), vec2.Y(p1), vec2.Y(p2), t),
     );
@@ -83,7 +83,7 @@ pub fn bezierQuadraticVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, t: f32) 
 
 /// Cubic Bezier interpolation for Vec2
 pub fn bezierCubicVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, p3: vec2.Vec2, t: f32) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         bezierCubic(vec2.X(p0), vec2.X(p1), vec2.X(p2), vec2.X(p3), t),
         bezierCubic(vec2.Y(p0), vec2.Y(p1), vec2.Y(p2), vec2.Y(p3), t),
     );
@@ -91,7 +91,7 @@ pub fn bezierCubicVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, p3: vec2.Vec
 
 /// Catmull-Rom spline interpolation for Vec2
 pub fn catmullRomVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, p3: vec2.Vec2, t: f32) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         catmullRom(vec2.X(p0), vec2.X(p1), vec2.X(p2), vec2.X(p3), t),
         catmullRom(vec2.Y(p0), vec2.Y(p1), vec2.Y(p2), vec2.Y(p3), t),
     );
@@ -99,7 +99,7 @@ pub fn catmullRomVec2(p0: vec2.Vec2, p1: vec2.Vec2, p2: vec2.Vec2, p3: vec2.Vec2
 
 /// Smootherstep interpolation for Vec2
 pub fn smootherstepVec2(edge0: vec2.Vec2, edge1: vec2.Vec2, x: vec2.Vec2) vec2.Vec2 {
-    return vec2.from(
+    return vec2.init(
         smootherstep(vec2.X(edge0), vec2.X(edge1), vec2.X(x)),
         smootherstep(vec2.Y(edge0), vec2.Y(edge1), vec2.Y(x)),
     );
@@ -110,7 +110,7 @@ pub fn smootherstepVec2(edge0: vec2.Vec2, edge1: vec2.Vec2, x: vec2.Vec2) vec2.V
 
 /// Cubic Hermite interpolation for Vec3
 pub fn hermiteVec3(p0: vec3.Vec3, p1: vec3.Vec3, m0: vec3.Vec3, m1: vec3.Vec3, t: f32) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         hermite(vec3.X(p0), vec3.X(p1), vec3.X(m0), vec3.X(m1), t),
         hermite(vec3.Y(p0), vec3.Y(p1), vec3.Y(m0), vec3.Y(m1), t),
         hermite(vec3.Z(p0), vec3.Z(p1), vec3.Z(m0), vec3.Z(m1), t),
@@ -119,7 +119,7 @@ pub fn hermiteVec3(p0: vec3.Vec3, p1: vec3.Vec3, m0: vec3.Vec3, m1: vec3.Vec3, t
 
 /// Quadratic Bezier interpolation for Vec3
 pub fn bezierQuadraticVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, t: f32) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         bezierQuadratic(vec3.X(p0), vec3.X(p1), vec3.X(p2), t),
         bezierQuadratic(vec3.Y(p0), vec3.Y(p1), vec3.Y(p2), t),
         bezierQuadratic(vec3.Z(p0), vec3.Z(p1), vec3.Z(p2), t),
@@ -128,7 +128,7 @@ pub fn bezierQuadraticVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, t: f32) 
 
 /// Cubic Bezier interpolation for Vec3
 pub fn bezierCubicVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, p3: vec3.Vec3, t: f32) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         bezierCubic(vec3.X(p0), vec3.X(p1), vec3.X(p2), vec3.X(p3), t),
         bezierCubic(vec3.Y(p0), vec3.Y(p1), vec3.Y(p2), vec3.Y(p3), t),
         bezierCubic(vec3.Z(p0), vec3.Z(p1), vec3.Z(p2), vec3.Z(p3), t),
@@ -137,7 +137,7 @@ pub fn bezierCubicVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, p3: vec3.Vec
 
 /// Catmull-Rom spline interpolation for Vec3
 pub fn catmullRomVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, p3: vec3.Vec3, t: f32) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         catmullRom(vec3.X(p0), vec3.X(p1), vec3.X(p2), vec3.X(p3), t),
         catmullRom(vec3.Y(p0), vec3.Y(p1), vec3.Y(p2), vec3.Y(p3), t),
         catmullRom(vec3.Z(p0), vec3.Z(p1), vec3.Z(p2), vec3.Z(p3), t),
@@ -146,7 +146,7 @@ pub fn catmullRomVec3(p0: vec3.Vec3, p1: vec3.Vec3, p2: vec3.Vec3, p3: vec3.Vec3
 
 /// Smootherstep interpolation for Vec3
 pub fn smootherstepVec3(edge0: vec3.Vec3, edge1: vec3.Vec3, x: vec3.Vec3) vec3.Vec3 {
-    return vec3.from(
+    return vec3.init(
         smootherstep(vec3.X(edge0), vec3.X(edge1), vec3.X(x)),
         smootherstep(vec3.Y(edge0), vec3.Y(edge1), vec3.Y(x)),
         smootherstep(vec3.Z(edge0), vec3.Z(edge1), vec3.Z(x)),
@@ -158,7 +158,7 @@ pub fn smootherstepVec3(edge0: vec3.Vec3, edge1: vec3.Vec3, x: vec3.Vec3) vec3.V
 
 /// Cubic Hermite interpolation for Vec4
 pub fn hermiteVec4(p0: vec4.Vec4, p1: vec4.Vec4, m0: vec4.Vec4, m1: vec4.Vec4, t: f32) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         hermite(vec4.X(p0), vec4.X(p1), vec4.X(m0), vec4.X(m1), t),
         hermite(vec4.Y(p0), vec4.Y(p1), vec4.Y(m0), vec4.Y(m1), t),
         hermite(vec4.Z(p0), vec4.Z(p1), vec4.Z(m0), vec4.Z(m1), t),
@@ -168,7 +168,7 @@ pub fn hermiteVec4(p0: vec4.Vec4, p1: vec4.Vec4, m0: vec4.Vec4, m1: vec4.Vec4, t
 
 /// Quadratic Bezier interpolation for Vec4
 pub fn bezierQuadraticVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, t: f32) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         bezierQuadratic(vec4.X(p0), vec4.X(p1), vec4.X(p2), t),
         bezierQuadratic(vec4.Y(p0), vec4.Y(p1), vec4.Y(p2), t),
         bezierQuadratic(vec4.Z(p0), vec4.Z(p1), vec4.Z(p2), t),
@@ -178,7 +178,7 @@ pub fn bezierQuadraticVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, t: f32) 
 
 /// Cubic Bezier interpolation for Vec4
 pub fn bezierCubicVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, p3: vec4.Vec4, t: f32) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         bezierCubic(vec4.X(p0), vec4.X(p1), vec4.X(p2), vec4.X(p3), t),
         bezierCubic(vec4.Y(p0), vec4.Y(p1), vec4.Y(p2), vec4.Y(p3), t),
         bezierCubic(vec4.Z(p0), vec4.Z(p1), vec4.Z(p2), vec4.Z(p3), t),
@@ -188,7 +188,7 @@ pub fn bezierCubicVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, p3: vec4.Vec
 
 /// Catmull-Rom spline interpolation for Vec4
 pub fn catmullRomVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, p3: vec4.Vec4, t: f32) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         catmullRom(vec4.X(p0), vec4.X(p1), vec4.X(p2), vec4.X(p3), t),
         catmullRom(vec4.Y(p0), vec4.Y(p1), vec4.Y(p2), vec4.Y(p3), t),
         catmullRom(vec4.Z(p0), vec4.Z(p1), vec4.Z(p2), vec4.Z(p3), t),
@@ -198,7 +198,7 @@ pub fn catmullRomVec4(p0: vec4.Vec4, p1: vec4.Vec4, p2: vec4.Vec4, p3: vec4.Vec4
 
 /// Smootherstep interpolation for Vec4
 pub fn smootherstepVec4(edge0: vec4.Vec4, edge1: vec4.Vec4, x: vec4.Vec4) vec4.Vec4 {
-    return vec4.from(
+    return vec4.init(
         smootherstep(vec4.X(edge0), vec4.X(edge1), vec4.X(x)),
         smootherstep(vec4.Y(edge0), vec4.Y(edge1), vec4.Y(x)),
         smootherstep(vec4.Z(edge0), vec4.Z(edge1), vec4.Z(x)),
@@ -305,8 +305,8 @@ test "catmullRom - smooth curve through points" {
 // -- Vec2 Interpolation Tests --
 
 test "hermiteVec2 - boundary values" {
-    const p0 = vec2.from(0, 0);
-    const p1 = vec2.from(10, 10);
+    const p0 = vec2.init(0, 0);
+    const p1 = vec2.init(10, 10);
     const m0 = vec2.zero();
     const m1 = vec2.zero();
 
@@ -318,9 +318,9 @@ test "hermiteVec2 - boundary values" {
 }
 
 test "bezierQuadraticVec2 - boundary values" {
-    const p0 = vec2.from(0, 0);
-    const p1 = vec2.from(5, 10);
-    const p2 = vec2.from(10, 0);
+    const p0 = vec2.init(0, 0);
+    const p1 = vec2.init(5, 10);
+    const p2 = vec2.init(10, 0);
 
     const at_start = bezierQuadraticVec2(p0, p1, p2, 0.0);
     try std.testing.expect(vec2.approxEqual(at_start, p0, eps));
@@ -330,10 +330,10 @@ test "bezierQuadraticVec2 - boundary values" {
 }
 
 test "bezierCubicVec2 - boundary values" {
-    const p0 = vec2.from(0, 0);
-    const p1 = vec2.from(2, 8);
-    const p2 = vec2.from(8, 8);
-    const p3 = vec2.from(10, 0);
+    const p0 = vec2.init(0, 0);
+    const p1 = vec2.init(2, 8);
+    const p2 = vec2.init(8, 8);
+    const p3 = vec2.init(10, 0);
 
     const at_start = bezierCubicVec2(p0, p1, p2, p3, 0.0);
     try std.testing.expect(vec2.approxEqual(at_start, p0, eps));
@@ -343,10 +343,10 @@ test "bezierCubicVec2 - boundary values" {
 }
 
 test "catmullRomVec2 - passes through control points" {
-    const p0 = vec2.from(0, 0);
-    const p1 = vec2.from(1, 2);
-    const p2 = vec2.from(3, 4);
-    const p3 = vec2.from(4, 6);
+    const p0 = vec2.init(0, 0);
+    const p1 = vec2.init(1, 2);
+    const p2 = vec2.init(3, 4);
+    const p3 = vec2.init(4, 6);
 
     const at_p1 = catmullRomVec2(p0, p1, p2, p3, 0.0);
     try std.testing.expect(vec2.approxEqual(at_p1, p1, eps));
@@ -358,8 +358,8 @@ test "catmullRomVec2 - passes through control points" {
 // -- Vec3 Interpolation Tests --
 
 test "hermiteVec3 - boundary values" {
-    const p0 = vec3.from(0, 0, 0);
-    const p1 = vec3.from(10, 10, 10);
+    const p0 = vec3.init(0, 0, 0);
+    const p1 = vec3.init(10, 10, 10);
     const m0 = vec3.zero();
     const m1 = vec3.zero();
 
@@ -371,10 +371,10 @@ test "hermiteVec3 - boundary values" {
 }
 
 test "bezierCubicVec3 - boundary values" {
-    const p0 = vec3.from(0, 0, 0);
-    const p1 = vec3.from(2, 8, 4);
-    const p2 = vec3.from(8, 8, 4);
-    const p3 = vec3.from(10, 0, 0);
+    const p0 = vec3.init(0, 0, 0);
+    const p1 = vec3.init(2, 8, 4);
+    const p2 = vec3.init(8, 8, 4);
+    const p3 = vec3.init(10, 0, 0);
 
     const at_start = bezierCubicVec3(p0, p1, p2, p3, 0.0);
     try std.testing.expect(vec3.approxEqual(at_start, p0, eps));
@@ -384,10 +384,10 @@ test "bezierCubicVec3 - boundary values" {
 }
 
 test "catmullRomVec3 - passes through control points" {
-    const p0 = vec3.from(0, 0, 0);
-    const p1 = vec3.from(1, 2, 3);
-    const p2 = vec3.from(3, 4, 5);
-    const p3 = vec3.from(4, 6, 7);
+    const p0 = vec3.init(0, 0, 0);
+    const p1 = vec3.init(1, 2, 3);
+    const p2 = vec3.init(3, 4, 5);
+    const p3 = vec3.init(4, 6, 7);
 
     const at_p1 = catmullRomVec3(p0, p1, p2, p3, 0.0);
     try std.testing.expect(vec3.approxEqual(at_p1, p1, eps));
@@ -399,8 +399,8 @@ test "catmullRomVec3 - passes through control points" {
 // -- Vec4 Interpolation Tests --
 
 test "hermiteVec4 - boundary values" {
-    const p0 = vec4.from(0, 0, 0, 0);
-    const p1 = vec4.from(10, 10, 10, 10);
+    const p0 = vec4.init(0, 0, 0, 0);
+    const p1 = vec4.init(10, 10, 10, 10);
     const m0 = vec4.zero();
     const m1 = vec4.zero();
 
@@ -412,10 +412,10 @@ test "hermiteVec4 - boundary values" {
 }
 
 test "catmullRomVec4 - passes through control points" {
-    const p0 = vec4.from(0, 0, 0, 0);
-    const p1 = vec4.from(1, 2, 3, 4);
-    const p2 = vec4.from(3, 4, 5, 6);
-    const p3 = vec4.from(4, 6, 7, 8);
+    const p0 = vec4.init(0, 0, 0, 0);
+    const p1 = vec4.init(1, 2, 3, 4);
+    const p2 = vec4.init(3, 4, 5, 6);
+    const p3 = vec4.init(4, 6, 7, 8);
 
     const at_p1 = catmullRomVec4(p0, p1, p2, p3, 0.0);
     try std.testing.expect(vec4.approxEqual(at_p1, p1, eps));

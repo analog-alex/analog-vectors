@@ -47,18 +47,18 @@ pub fn closestPointToPoint(s: Segment, p: Vec3) Vec3 {
 
 test "direction - returns end minus start" {
     // given
-    const s = from(vec3.from(1, 2, 3), vec3.from(4, 6, 8));
+    const s = from(vec3.init(1, 2, 3), vec3.init(4, 6, 8));
 
     // when
     const d = direction(s);
 
     // then
-    try std.testing.expect(vec3.equal(d, vec3.from(3, 4, 5)));
+    try std.testing.expect(vec3.equal(d, vec3.init(3, 4, 5)));
 }
 
 test "length - calculates segment length" {
     // given
-    const s = from(vec3.from(0, 0, 0), vec3.from(3, 4, 0));
+    const s = from(vec3.init(0, 0, 0), vec3.init(3, 4, 0));
 
     // when
     const l = length(s);
@@ -69,47 +69,47 @@ test "length - calculates segment length" {
 
 test "midpoint - returns center of segment" {
     // given
-    const s = from(vec3.from(0, 0, 0), vec3.from(10, 10, 10));
+    const s = from(vec3.init(0, 0, 0), vec3.init(10, 10, 10));
 
     // when
     const m = midpoint(s);
 
     // then
-    try std.testing.expect(vec3.equal(m, vec3.from(5, 5, 5)));
+    try std.testing.expect(vec3.equal(m, vec3.init(5, 5, 5)));
 }
 
 test "closestPointToPoint - returns start when projected before segment" {
     // given
-    const s = from(vec3.from(0, 0, 0), vec3.from(10, 0, 0));
-    const p = vec3.from(-5, 3, 0);
+    const s = from(vec3.init(0, 0, 0), vec3.init(10, 0, 0));
+    const p = vec3.init(-5, 3, 0);
 
     // when
     const closest = closestPointToPoint(s, p);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(0, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(0, 0, 0), 0.0001));
 }
 
 test "closestPointToPoint - returns end when projected beyond segment" {
     // given
-    const s = from(vec3.from(0, 0, 0), vec3.from(10, 0, 0));
-    const p = vec3.from(15, 3, 0);
+    const s = from(vec3.init(0, 0, 0), vec3.init(10, 0, 0));
+    const p = vec3.init(15, 3, 0);
 
     // when
     const closest = closestPointToPoint(s, p);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(10, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(10, 0, 0), 0.0001));
 }
 
 test "closestPointToPoint - returns projection onto segment" {
     // given
-    const s = from(vec3.from(0, 0, 0), vec3.from(10, 0, 0));
-    const p = vec3.from(5, 3, 0);
+    const s = from(vec3.init(0, 0, 0), vec3.init(10, 0, 0));
+    const p = vec3.init(5, 3, 0);
 
     // when
     const closest = closestPointToPoint(s, p);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(5, 0, 0), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(5, 0, 0), 0.0001));
 }

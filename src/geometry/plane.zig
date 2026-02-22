@@ -55,8 +55,8 @@ pub inline fn isPointInFront(p: Plane, point: Vec3) bool {
 
 test "fromPointNormal - creates plane through point with normal" {
     // given
-    const point = vec3.from(0, 5, 0);
-    const normal = vec3.from(0, 1, 0);
+    const point = vec3.init(0, 5, 0);
+    const normal = vec3.init(0, 1, 0);
 
     // when
     const p = fromPointNormal(point, normal);
@@ -67,9 +67,9 @@ test "fromPointNormal - creates plane through point with normal" {
 
 test "fromPoints - creates plane from three points" {
     // given
-    const a = vec3.from(0, 0, 0);
-    const b = vec3.from(1, 0, 0);
-    const c = vec3.from(0, 0, 1);
+    const a = vec3.init(0, 0, 0);
+    const b = vec3.init(1, 0, 0);
+    const c = vec3.init(0, 0, 1);
 
     // when
     const p = fromPoints(a, b, c);
@@ -82,10 +82,10 @@ test "fromPoints - creates plane from three points" {
 
 test "signedDistanceToPoint - positive when in front" {
     // given
-    const p = fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const p = fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
-    const dist = signedDistanceToPoint(p, vec3.from(0, 5, 0));
+    const dist = signedDistanceToPoint(p, vec3.init(0, 5, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, 5.0), dist, 0.0001);
@@ -93,10 +93,10 @@ test "signedDistanceToPoint - positive when in front" {
 
 test "signedDistanceToPoint - negative when behind" {
     // given
-    const p = fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const p = fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when
-    const dist = signedDistanceToPoint(p, vec3.from(0, -3, 0));
+    const dist = signedDistanceToPoint(p, vec3.init(0, -3, 0));
 
     // then
     try std.testing.expectApproxEqAbs(@as(f32, -3.0), dist, 0.0001);
@@ -104,21 +104,21 @@ test "signedDistanceToPoint - negative when behind" {
 
 test "closestPointToPoint - projects onto plane" {
     // given
-    const p = fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
-    const point = vec3.from(3, 7, 4);
+    const p = fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
+    const point = vec3.init(3, 7, 4);
 
     // when
     const closest = closestPointToPoint(p, point);
 
     // then
-    try std.testing.expect(vec3.approxEqual(closest, vec3.from(3, 0, 4), 0.0001));
+    try std.testing.expect(vec3.approxEqual(closest, vec3.init(3, 0, 4), 0.0001));
 }
 
 test "isPointInFront - returns true for points on normal side" {
     // given
-    const p = fromPointNormal(vec3.from(0, 0, 0), vec3.from(0, 1, 0));
+    const p = fromPointNormal(vec3.init(0, 0, 0), vec3.init(0, 1, 0));
 
     // when / then
-    try std.testing.expect(isPointInFront(p, vec3.from(0, 1, 0)));
-    try std.testing.expect(!isPointInFront(p, vec3.from(0, -1, 0)));
+    try std.testing.expect(isPointInFront(p, vec3.init(0, 1, 0)));
+    try std.testing.expect(!isPointInFront(p, vec3.init(0, -1, 0)));
 }

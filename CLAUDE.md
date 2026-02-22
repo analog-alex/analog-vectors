@@ -42,7 +42,7 @@ This is a **library module**, not an executable. The build system creates a reus
 
 **Vector Implementation:**
 - Vec2 is implemented as `[2]f32` (array-based)
-- Functions are namespaced (e.g., `vec2.from()`, `vec2.X()`, `vec2.sum()`)
+- Functions are namespaced (e.g., `vec2.init()`, `vec2.X()`, `vec2.sum()`)
 - Coordinate accessors (X, Y) are inline functions for performance
 
 ## Testing
