@@ -22,11 +22,6 @@ pub fn fromVec3(v: [3]f32, w: f32) Vec4 {
     return init(v[0], v[1], v[2], w);
 }
 
-/// Deprecated: use init for direct component construction.
-pub fn from(x: f32, y: f32, z: f32, w: f32) Vec4 {
-    return init(x, y, z, w);
-}
-
 pub inline fn X(v: Vec4) f32 {
     return v[0];
 }
@@ -207,11 +202,6 @@ test "fromVec2 creates vec4 by appending z and w" {
 
 test "fromVec3 creates vec4 by appending w" {
     const v = fromVec3(.{ 1, 2, 3 }, 4);
-    try std.testing.expect(equal(v, init(1, 2, 3, 4)));
-}
-
-test "from is a deprecated alias for init" {
-    const v = from(1, 2, 3, 4);
     try std.testing.expect(equal(v, init(1, 2, 3, 4)));
 }
 

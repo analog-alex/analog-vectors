@@ -177,8 +177,6 @@ pub fn Y(v: Vec3) f32
 pub fn Z(v: Vec3) f32
 ```
 
-Compatibility note: `from(...)` remains available as a deprecated alias for direct construction.
-
 #### Products
 ```zig
 pub fn dot(lhs: Vec3, rhs: Vec3) f32
