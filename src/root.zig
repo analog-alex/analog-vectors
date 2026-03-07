@@ -1,6 +1,9 @@
 //! By convention, root.zig is the root source file when making a library.
 const std = @import("std");
 
+// Export version for library consumers
+pub const version = @import("version.zig").version;
+
 // Export vec2 module for library consumers
 pub const vec2 = @import("vectors/vec2.zig");
 
@@ -52,6 +55,10 @@ pub const interpolation = @import("utils/interpolation.zig");
 
 test {
     std.testing.refAllDecls(@This());
+}
+
+test "version is accessible" {
+    try std.testing.expectEqualStrings("0.1.0", version);
 }
 
 test "vec2 module is accessible" {
