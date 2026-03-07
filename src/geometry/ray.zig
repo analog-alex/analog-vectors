@@ -57,3 +57,15 @@ test "pointAt - t=0 returns origin" {
     // then
     try std.testing.expect(vec3.approxEqual(p, vec3.init(3, 4, 5), 0.0001));
 }
+
+test "from - zero direction remains zero direction" {
+    // given
+    const origin = vec3.init(1, 2, 3);
+
+    // when
+    const r = from(origin, vec3.zero());
+
+    // then
+    try std.testing.expect(vec3.equal(r.origin, origin));
+    try std.testing.expect(vec3.equal(r.direction, vec3.zero()));
+}

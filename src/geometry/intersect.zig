@@ -307,3 +307,27 @@ test "rayAABB - ray pointing away" {
     // then
     try std.testing.expect(hit == null);
 }
+
+test "rayAABB - parallel direction on slab boundary currently misses (characterization)" {
+    // given - ray is parallel to x slabs and starts on x-min face
+    const ray = ray_mod.fromRaw(vec3.init(-1, 0, 0), vec3.init(0, 1, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
+
+    // when
+    const hit = rayAABB(ray, box);
+
+    // then
+    try std.testing.expect(hit == null);
+}
+
+test "rayAABB - parallel direction outside slab misses" {
+    // given - ray is parallel to x slabs and starts outside x range
+    const ray = ray_mod.fromRaw(vec3.init(-2, 0, 0), vec3.init(0, 1, 0));
+    const box = aabb_mod.from(vec3.init(-1, -1, -1), vec3.init(1, 1, 1));
+
+    // when
+    const hit = rayAABB(ray, box);
+
+    // then
+    try std.testing.expect(hit == null);
+}

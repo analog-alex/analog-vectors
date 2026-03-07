@@ -306,6 +306,86 @@ test "rayAABB - ray pointing away" {
     try std.testing.expect(hit == null);
 }
 
+test "rayAABB - parallel direction on slab boundary currently misses (characterization)" {
+    // given - ray is parallel to x slabs and starts on x-min face
+    const ray = ray_mod.fromRaw(vec4.init(-1, 0, 0, 1), vec4.init(0, 1, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
+
+    // when
+    const hit = rayAABB(ray, box);
+
+    // then
+    try std.testing.expect(hit == null);
+}
+
+test "rayAABB - parallel direction outside slab misses" {
+    // given - ray is parallel to x slabs and starts outside x range
+    const ray = ray_mod.fromRaw(vec4.init(-2, 0, 0, 1), vec4.init(0, 1, 0, 0));
+    const box = aabb_mod.from(vec4.init(-1, -1, -1, 1), vec4.init(1, 1, 1, 1));
+
+    // when
+    const hit = rayAABB(ray, box);
+
+    // then
+    try std.testing.expect(hit == null);
+}
+
+test "parity - scalar and simd raySphere produce same hit" {
+    const scalar_vec3 = @import("../vectors/vec3.zig");
+    const scalar_ray = @import("../geometry/ray.zig");
+    const scalar_sphere = @import("../geometry/sphere.zig");
+    const scalar_intersect = @import("../geometry/intersect.zig");
+    const conv = @import("conversions.zig");
+
+    // given
+    const r3 = scalar_ray.from(scalar_vec3.init(-10, 3, 0), scalar_vec3.init(1, 0, 0));
+    const s3 = scalar_sphere.from(scalar_vec3.init(0, 0, 0), 3);
+    const r4 = ray_mod.from(conv.vec3ToPoint(r3.origin), conv.vec3ToDir(r3.direction));
+    const s4 = sphere_mod.from(conv.vec3ToPoint(s3.center), s3.radius);
+
+    // when
+    const h3 = scalar_intersect.raySphere(r3, s3);
+    const h4 = raySphere(r4, s4);
+
+    // then
+    try std.testing.expect(h3 != null and h4 != null);
+    try std.testing.expectApproxEqAbs(h3.?.t, h4.?.t, 0.0001);
+    try std.testing.expect(scalar_vec3.approxEqual(h3.?.point, conv.vec4ToVec3(h4.?.point), 0.001));
+    try std.testing.expect(scalar_vec3.approxEqual(h3.?.normal, conv.vec4ToVec3(h4.?.normal), 0.001));
+}
+
+test "parity - scalar and simd rayAABB produce same hit and miss" {
+    const scalar_vec3 = @import("../vectors/vec3.zig");
+    const scalar_ray = @import("../geometry/ray.zig");
+    const scalar_aabb = @import("../geometry/aabb.zig");
+    const scalar_intersect = @import("../geometry/intersect.zig");
+    const conv = @import("conversions.zig");
+
+    // given (hit case)
+    const hit_ray3 = scalar_ray.from(scalar_vec3.init(-5, 0, 0), scalar_vec3.init(1, 0, 0));
+    const box3 = scalar_aabb.from(scalar_vec3.init(-1, -1, -1), scalar_vec3.init(1, 1, 1));
+    const hit_ray4 = ray_mod.from(conv.vec3ToPoint(hit_ray3.origin), conv.vec3ToDir(hit_ray3.direction));
+    const box4 = aabb_mod.from(conv.vec3ToPoint(box3.min), conv.vec3ToPoint(box3.max));
+
+    // when (hit case)
+    const hit3 = scalar_intersect.rayAABB(hit_ray3, box3);
+    const hit4 = rayAABB(hit_ray4, box4);
+
+    // then (hit case)
+    try std.testing.expect(hit3 != null and hit4 != null);
+    try std.testing.expectApproxEqAbs(hit3.?.t, hit4.?.t, 0.0001);
+    try std.testing.expect(scalar_vec3.approxEqual(hit3.?.point, conv.vec4ToVec3(hit4.?.point), 0.001));
+
+    // given/when (miss case)
+    const miss_ray3 = scalar_ray.from(scalar_vec3.init(-5, 5, 0), scalar_vec3.init(1, 0, 0));
+    const miss_ray4 = ray_mod.from(conv.vec3ToPoint(miss_ray3.origin), conv.vec3ToDir(miss_ray3.direction));
+    const miss3 = scalar_intersect.rayAABB(miss_ray3, box3);
+    const miss4 = rayAABB(miss_ray4, box4);
+
+    // then (miss case)
+    try std.testing.expect(miss3 == null and miss4 == null);
+}
+
 // ===============
 // Tests - AABB-AABB
 

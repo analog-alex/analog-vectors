@@ -86,3 +86,15 @@ test "from - diagonal direction is normalized" {
     const len = @sqrt(r.direction[0] * r.direction[0] + r.direction[1] * r.direction[1] + r.direction[2] * r.direction[2]);
     try std.testing.expect(@abs(len - 1.0) < 0.0001);
 }
+
+test "from - zero direction remains zero direction with w=0" {
+    // given
+    const origin = vec4.init(1, 2, 3, 0);
+
+    // when
+    const r = from(origin, vec4.zero());
+
+    // then
+    try std.testing.expect(vec4.equal(r.origin, vec4.init(1, 2, 3, 1)));
+    try std.testing.expect(vec4.equal(r.direction, vec4.zero()));
+}
