@@ -510,3 +510,24 @@ test "combined transformations - translate then scale" {
     const result = transformVec3(combined, v);
     try std.testing.expect(vec3.equal(result, vec3.init(20, 0, 0)));
 }
+
+test "transformVec3 applies translation term (point semantics)" {
+    const m = translation(10, -2, 3);
+    const v = vec3.init(1, 2, 3);
+    const result = transformVec3(m, v);
+    try std.testing.expect(vec3.equal(result, vec3.init(11, 0, 6)));
+}
+
+test "transformVec4 keeps direction unchanged by translation (w=0)" {
+    const m = translation(10, -2, 3);
+    const dir = vec4.init(1, 2, 3, 0);
+    const result = transformVec4(m, dir);
+    try std.testing.expect(vec4.approxEqual(result, dir, 0.0001));
+}
+
+test "transformVec4 translates point (w=1)" {
+    const m = translation(10, -2, 3);
+    const point = vec4.init(1, 2, 3, 1);
+    const result = transformVec4(m, point);
+    try std.testing.expect(vec4.approxEqual(result, vec4.init(11, 0, 6, 1), 0.0001));
+}
