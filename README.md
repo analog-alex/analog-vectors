@@ -71,6 +71,10 @@ zig build test
 zig build
 ```
 
+## Contributing
+
+Contribution guidance, including documentation standards and the docs PR checklist, lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
 ## Public API Entry
 
 Library exports are re-exported from `src/root.zig`.
