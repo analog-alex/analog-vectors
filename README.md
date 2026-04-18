@@ -98,6 +98,8 @@ The public API is re-exported from [`src/root.zig`](src/root.zig).
 
 ## Contributing
 
+Contribution guidance, including documentation standards and the docs PR checklist, lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
 - Format with `zig fmt .`
 - Run tests with `zig build test`
 - Build with `zig build`
