@@ -58,7 +58,7 @@ test {
 }
 
 test "version is accessible" {
-    try std.testing.expectEqualStrings("0.1.0", version);
+    try std.testing.expectEqualStrings("0.1.1", version);
 }
 
 test "vec2 module is accessible" {
