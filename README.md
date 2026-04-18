@@ -6,8 +6,8 @@ It is a good fit for graphics, simulation, tooling, and any project that wants s
 
 ## Requirements
 
-- Zig `0.15.1` or newer
-- Tested with Zig `0.15.2`
+- Zig `0.16.0` or newer
+- Tested with Zig `0.16.0`
 
 ## Installation
 
