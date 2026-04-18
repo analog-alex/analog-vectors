@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        zig-version: ['0.15.2']
+        zig-version: ['0.16.0']
 
     steps:
       - name: Checkout code
@@ -149,7 +149,7 @@ jobs:
         run: |
           echo "ℹ️  Zig Package Manager Publishing"
           echo ""
-          echo "As of Zig 0.15.x, the official package registry is still in development."
+          echo "As of Zig 0.16.x, the official package registry is still in development."
           echo "Once Zig 1.0 is released, consider publishing to the official registry."
           echo ""
           echo "For now, users can consume this package via Git URL:"

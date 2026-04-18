@@ -4,8 +4,8 @@ Operational guide for coding agents working in this repository.
 
 ## Scope and Rule Sources
 - Repository: `analog-vectors` (Zig library package)
-- Minimum Zig: `0.15.1` (`build.zig.zon`)
-- CI Zig: `0.15.2` (format + test + build)
+- Minimum Zig: `0.16.0` (`build.zig.zon`)
+- CI Zig: `0.16.0` (format + test + build)
 
 Cursor/Copilot rules status (currently):
 - `.cursor/rules/`: not present
