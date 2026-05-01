@@ -61,3 +61,4 @@ Before opening or merging a pull request that touches documentation, confirm the
 - Version notes were added or updated when behavior depends on Zig or package version.
 - New or moved documentation is linked from an existing discoverable place such as `README.md` or this file.
 - Documentation changes needed for the pull request were included in the same branch.
+- Wiki page changes were updated in `docs/wiki/` so they can be reviewed before being synced to GitHub.
