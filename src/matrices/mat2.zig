@@ -18,6 +18,8 @@ pub fn fromCols(col0: vec2.Vec2, col1: vec2.Vec2) Mat2 {
     return [4]f32{ col0[0], col0[1], col1[0], col1[1] };
 }
 
+/// Returns the 2x2 identity matrix.
+/// [[1, 0], [0, 1]] in column-major.
 pub fn identity() Mat2 {
     return [4]f32{ 1, 0, 0, 1 };
 }
@@ -62,6 +64,8 @@ pub fn determinant(m: Mat2) f32 {
     return m[0] * m[3] - m[2] * m[1];
 }
 
+/// Computes the inverse of the matrix, or null if singular (det near zero).
+/// Uses epsilon 1e-6 for singularity check. Returns optional for safe error handling.
 pub fn inverse(m: Mat2) ?Mat2 {
     const det = determinant(m);
     if (@abs(det) < 1e-6) return null;

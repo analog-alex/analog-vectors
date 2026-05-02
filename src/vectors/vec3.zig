@@ -1,11 +1,16 @@
 // @analogAlex
 const std = @import("std");
 
+/// 3D vector type, represented as `[3]f32`.
+/// Primary type for positions, directions, normals in 3D graphics.
+/// Hot-path accessors: `X()`, `Y()`, `Z()`.
 pub const Vec3 = [3]f32;
 
 // ===============
 // Construction & Accessors
 
+/// Creates a Vec3 from x, y, z components.
+/// Primary constructor. Test-backed example in root.zig accessibility test.
 pub fn init(x: f32, y: f32, z: f32) Vec3 {
     return [3]f32{ x, y, z };
 }
@@ -37,30 +42,37 @@ pub inline fn Z(v: Vec3) f32 {
 // ===============
 // Essential Arithmetic
 
+/// Component-wise addition.
 pub fn sum(lhs: Vec3, rhs: Vec3) Vec3 {
     return [3]f32{ lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2] };
 }
 
+/// Component-wise subtraction.
 pub fn sub(lhs: Vec3, rhs: Vec3) Vec3 {
     return [3]f32{ lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2] };
 }
 
+/// Scalar multiplication.
 pub fn mul(v: Vec3, scalar: f32) Vec3 {
     return [3]f32{ v[0] * scalar, v[1] * scalar, v[2] * scalar };
 }
 
+/// Scalar division (caller ensures scalar != 0).
 pub fn div(v: Vec3, scalar: f32) Vec3 {
     return [3]f32{ v[0] / scalar, v[1] / scalar, v[2] / scalar };
 }
 
+/// Negation.
 pub fn neg(v: Vec3) Vec3 {
     return [3]f32{ -v[0], -v[1], -v[2] };
 }
 
+/// Component-wise multiplication.
 pub fn componentMul(lhs: Vec3, rhs: Vec3) Vec3 {
     return [3]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1], lhs[2] * rhs[2] };
 }
 
+/// Component-wise division.
 pub fn componentDiv(lhs: Vec3, rhs: Vec3) Vec3 {
     return [3]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1], lhs[2] / rhs[2] };
 }
