@@ -1,31 +1,52 @@
 // @analogAlex
 const std = @import("std");
 
+/// 2D vector type, represented as a fixed-size array `[2]f32` for performance and simplicity.
+/// Components are accessible via `X()`, `Y()` or direct indexing `[0]`, `[1]`.
+/// All operations use `f32` scalars.
 pub const Vec2 = [2]f32;
 
 // ===============
 // Construction & Accessors
 
+/// Creates a Vec2 from explicit x and y components.
+/// This is the primary constructor.
+///
+/// Example usage (test-backed):
+/// ```zig
+/// const v = vec2.init(3.0, 4.0);
+/// try std.testing.expectEqual(@as(f32, 3.0), v[0]);
+/// ```
 pub fn init(x: f32, y: f32) Vec2 {
     return [2]f32{ x, y };
 }
 
+/// Creates a Vec2 by copying from a `[2]f32` array.
+/// Useful for interoperability with array-based APIs.
 pub fn fromArray(values: [2]f32) Vec2 {
     return values;
 }
 
+/// Creates a Vec2 by truncating a Vec3 (drops the z component).
+/// Equivalent to `init(v[0], v[1])`.
 pub fn fromVec3(v: [3]f32) Vec2 {
     return init(v[0], v[1]);
 }
 
+/// Creates a Vec2 by truncating a Vec4 (drops z and w components).
+/// Equivalent to `init(v[0], v[1])`.
 pub fn fromVec4(v: @Vector(4, f32)) Vec2 {
     return init(v[0], v[1]);
 }
 
+/// Returns the X (first) component of the vector.
+/// Inline hot-path accessor.
 pub inline fn X(v: Vec2) f32 {
     return v[0];
 }
 
+/// Returns the Y (second) component of the vector.
+/// Inline hot-path accessor.
 pub inline fn Y(v: Vec2) f32 {
     return v[1];
 }
@@ -33,30 +54,44 @@ pub inline fn Y(v: Vec2) f32 {
 // ===============
 // Essential Arithmetic
 
+/// Component-wise addition of two vectors.
+/// Returns `lhs + rhs`.
 pub fn sum(lhs: Vec2, rhs: Vec2) Vec2 {
     return [2]f32{ lhs[0] + rhs[0], lhs[1] + rhs[1] };
 }
 
+/// Component-wise subtraction of two vectors.
+/// Returns `lhs - rhs`.
 pub fn sub(lhs: Vec2, rhs: Vec2) Vec2 {
     return [2]f32{ lhs[0] - rhs[0], lhs[1] - rhs[1] };
 }
 
+/// Multiplies vector by a scalar.
+/// Returns `v * scalar`.
 pub fn mul(v: Vec2, scalar: f32) Vec2 {
     return [2]f32{ v[0] * scalar, v[1] * scalar };
 }
 
+/// Divides vector by a scalar (no zero-check; caller must ensure scalar != 0).
+/// Returns `v / scalar`.
 pub fn div(v: Vec2, scalar: f32) Vec2 {
     return [2]f32{ v[0] / scalar, v[1] / scalar };
 }
 
+/// Negates all components of the vector.
+/// Returns `-v`.
 pub fn neg(v: Vec2) Vec2 {
     return [2]f32{ -v[0], -v[1] };
 }
 
+/// Component-wise (Hadamard) product of two vectors.
+/// Returns `[lhs[0]*rhs[0], lhs[1]*rhs[1]]`.
 pub fn componentMul(lhs: Vec2, rhs: Vec2) Vec2 {
     return [2]f32{ lhs[0] * rhs[0], lhs[1] * rhs[1] };
 }
 
+/// Component-wise division of two vectors (no zero-check).
+/// Returns `[lhs[0]/rhs[0], lhs[1]/rhs[1]]`.
 pub fn componentDiv(lhs: Vec2, rhs: Vec2) Vec2 {
     return [2]f32{ lhs[0] / rhs[0], lhs[1] / rhs[1] };
 }
@@ -64,24 +99,32 @@ pub fn componentDiv(lhs: Vec2, rhs: Vec2) Vec2 {
 // ===============
 // Length/Distance Operations
 
+/// Returns the squared Euclidean length (avoids sqrt for comparisons).
+/// Equivalent to `dot(v, v)`.
 pub inline fn lengthSquared(v: Vec2) f32 {
     return v[0] * v[0] + v[1] * v[1];
 }
 
+/// Returns the Euclidean length (magnitude) of the vector.
+/// Uses `std.math.sqrt`.
 pub fn length(v: Vec2) f32 {
     return @sqrt(lengthSquared(v));
 }
 
+/// Returns a unit vector in the same direction.
+/// Edge case: zero vector returns `zero()` (avoids div-by-zero).
 pub fn normalize(v: Vec2) Vec2 {
     const len = length(v);
     if (len == 0) return zero();
     return div(v, len);
 }
 
+/// Returns the Euclidean distance between points a and b.
 pub fn distance(a: Vec2, b: Vec2) f32 {
     return length(sub(b, a));
 }
 
+/// Returns squared distance (avoids sqrt).
 pub inline fn distanceSquared(a: Vec2, b: Vec2) f32 {
     return lengthSquared(sub(b, a));
 }
@@ -89,10 +132,14 @@ pub inline fn distanceSquared(a: Vec2, b: Vec2) f32 {
 // ===============
 // Products
 
+/// Dot (scalar) product of two vectors.
+/// Returns `lhs · rhs` = |lhs|*|rhs|*cos(theta).
 pub inline fn dot(lhs: Vec2, rhs: Vec2) f32 {
     return lhs[0] * rhs[0] + lhs[1] * rhs[1];
 }
 
+/// 2D cross product (scalar result, the z-component of 3D cross).
+/// Returns the signed area of parallelogram; positive = lhs rotated CCW toward rhs.
 pub inline fn cross(lhs: Vec2, rhs: Vec2) f32 {
     return lhs[0] * rhs[1] - lhs[1] * rhs[0];
 }
@@ -100,8 +147,10 @@ pub inline fn cross(lhs: Vec2, rhs: Vec2) f32 {
 // ===============
 // Geometric Projections
 
-/// Projects vector v onto another vector
-/// Returns the component of v that lies in the direction of onto
+/// Projects vector `v` onto `onto`.
+/// Returns the parallel component: `proj = (dot(v, onto) / |onto|^2) * onto`.
+/// Edge case: zero `onto` returns `zero()`.
+/// This is a key geometric utility; test-backed in "project" tests.
 pub fn project(v: Vec2, onto: Vec2) Vec2 {
     const onto_len_sq = lengthSquared(onto);
     if (onto_len_sq == 0) return zero();
@@ -109,14 +158,14 @@ pub fn project(v: Vec2, onto: Vec2) Vec2 {
     return mul(onto, scalar);
 }
 
-/// Returns the rejection of v from another vector
-/// This is the perpendicular component of v relative to ref
+/// Returns the rejection (perpendicular component) of `v` from `ref`.
+/// Equivalent to `v - project(v, ref)`.
 pub fn reject(v: Vec2, ref: Vec2) Vec2 {
     return sub(v, project(v, ref));
 }
 
-/// Reflects vector v across a normal vector
-/// The normal should be normalized for correct results
+/// Reflects `v` across `normal` (assumes `normal` is unit length for correctness).
+/// Formula: `v - 2 * dot(v, normal) * normal`.
 pub fn reflect(v: Vec2, normal: Vec2) Vec2 {
     const d = dot(v, normal);
     return sub(v, mul(normal, 2 * d));
@@ -125,6 +174,8 @@ pub fn reflect(v: Vec2, normal: Vec2) Vec2 {
 // ===============
 // Interpolation & Clamping
 
+/// Linear interpolation between `a` and `b` at parameter `t` (t in [0,1]).
+/// Returns `a + (b - a) * t`. No clamping of t performed.
 pub fn lerp(a: Vec2, b: Vec2, t: f32) Vec2 {
     return [2]f32{
         a[0] + (b[0] - a[0]) * t,
@@ -132,6 +183,7 @@ pub fn lerp(a: Vec2, b: Vec2, t: f32) Vec2 {
     };
 }
 
+/// Component-wise clamp: each component of `v` is clamped to [min_v[i], max_v[i]].
 pub fn clamp(v: Vec2, min_v: Vec2, max_v: Vec2) Vec2 {
     return [2]f32{
         @max(min_v[0], @min(max_v[0], v[0])),
@@ -142,10 +194,14 @@ pub fn clamp(v: Vec2, min_v: Vec2, max_v: Vec2) Vec2 {
 // ===============
 // Angle Operations
 
+/// Returns the angle (in radians) of the vector from positive X axis.
+/// Range: (-pi, pi]. Uses `std.math.atan2`.
 pub fn angle(v: Vec2) f32 {
     return std.math.atan2(v[1], v[0]);
 }
 
+/// Returns the smallest angle (radians) between vectors `a` and `b`.
+/// Result in [0, pi]. Handles zero-length gracefully (returns 0).
 pub fn angleBetween(a: Vec2, b: Vec2) f32 {
     const dot_product = dot(a, b);
     const len_product = length(a) * length(b);
@@ -154,6 +210,8 @@ pub fn angleBetween(a: Vec2, b: Vec2) f32 {
     return std.math.acos(@max(-1.0, @min(1.0, cos_angle)));
 }
 
+/// Rotates vector `v` counter-clockwise by `radians`.
+/// Uses 2D rotation matrix.
 pub fn rotate(v: Vec2, radians: f32) Vec2 {
     const cos_r = @cos(radians);
     const sin_r = @sin(radians);
@@ -166,14 +224,18 @@ pub fn rotate(v: Vec2, radians: f32) Vec2 {
 // ===============
 // Utility
 
+/// Exact equality (bitwise for floats; use `approxEqual` for tolerance).
 pub fn equal(a: Vec2, b: Vec2) bool {
     return a[0] == b[0] and a[1] == b[1];
 }
 
+/// Approximate equality within `epsilon` per component.
+/// Preferred for floating-point comparisons.
 pub fn approxEqual(a: Vec2, b: Vec2, epsilon: f32) bool {
     return @abs(a[0] - b[0]) <= epsilon and @abs(a[1] - b[1]) <= epsilon;
 }
 
+/// Component-wise minimum.
 pub fn min(a: Vec2, b: Vec2) Vec2 {
     return [2]f32{
         @min(a[0], b[0]),
@@ -181,6 +243,7 @@ pub fn min(a: Vec2, b: Vec2) Vec2 {
     };
 }
 
+/// Component-wise maximum.
 pub fn max(a: Vec2, b: Vec2) Vec2 {
     return [2]f32{
         @max(a[0], b[0]),
@@ -188,18 +251,22 @@ pub fn max(a: Vec2, b: Vec2) Vec2 {
     };
 }
 
+/// Returns the zero vector `(0, 0)`.
 pub fn zero() Vec2 {
     return [2]f32{ 0, 0 };
 }
 
+/// Returns the one vector `(1, 1)`.
 pub fn one() Vec2 {
     return [2]f32{ 1, 1 };
 }
 
+/// Returns the unit vector along X `(1, 0)`.
 pub fn unitX() Vec2 {
     return [2]f32{ 1, 0 };
 }
 
+/// Returns the unit vector along Y `(0, 1)`.
 pub fn unitY() Vec2 {
     return [2]f32{ 0, 1 };
 }
