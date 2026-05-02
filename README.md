@@ -91,6 +91,7 @@ The public API is re-exported from [`src/root.zig`](src/root.zig).
 
 ## Deeper Docs
 
+- **Live API Documentation**: https://analog-alex.github.io/analog-vectors/ (automatically published on every push to main)
 - API docs entry point: [`src/root.zig`](src/root.zig)
 - Module source docs: browse the files under [`src/`](src/)
 - Wiki source in this repo: [`docs/wiki/`](docs/wiki/)
