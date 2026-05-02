@@ -1,0 +1,84 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Docs
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: '0.16.0'
+
+      - name: Cache Zig dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/zig
+            zig-cache
+          key: ${{ runner.os }}-zig-0.16.0-${{ hashFiles('build.zig.zon') }}
+          restore-keys: |
+            ${{ runner.os }}-zig-0.16.0-
+            ${{ runner.os }}-zig-
+
+      - name: Check code formatting
+        run: |
+          echo "Running Zig formatter check..."
+          zig fmt --check .
+          echo "✓ Code formatting check passed"
+
+      - name: Run tests
+        run: |
+          echo "Running all tests before docs generation..."
+          zig build test
+          echo "✓ All tests passed"
+
+      - name: Generate documentation
+        run: |
+          echo "Generating API documentation..."
+          zig build docs
+          echo "✓ Documentation generated successfully"
+          ls -la zig-out/docs/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: zig-out/docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ API documentation published successfully!"
+          echo ""
+          echo "📚 Docs URL: ${{ steps.deployment.outputs.page_url }}"
+          echo ""
+          echo "The documentation is now live and will stay in sync with main."
